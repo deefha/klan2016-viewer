@@ -65,114 +65,47 @@ body {
 }
 
 #shell {
-	padding: 20px;
 }
 
-.wrapper-display {
-	float: left;
-	position: relative;
-	width: 640px;
-	height: 480px;
-	overflow: hidden;
-	margin-right: 25px;
-}
-
-.wrapper-info {
-	float: left;
-	width: 300px;
-	height: 95vh;
+.wrapper-aside {
+	position: fixed;
+	width: 180px;
+	height: 97vh;
 	overflow: auto;
-	margin-right: 25px;
-	background-color: black;
+	padding: 10px;
+	background-color: #fafafa;
 }
 
-.wrapper-log {
+.wrapper-main {
+	padding: 10px 0 10px 210px;
+}
+
+.wrapper-main .item-image {
 	float: left;
-	width: 400px;
-	height: 95vh;
-	overflow: auto;
-	background-color: black;
+	width: 320px;
+	height: 260px;
+	margin: 0 10px 10px 0;
+	padding: 0 5px 5px 5px;
+	background: #eee;
+	border: 1px solid #ddd;
 }
 
-.wrapper-info .info-event-toggle,
-.wrapper-log .log-macro-toggle {
-	cursor: pointer;
-	cursor: hand;
+.wrapper-main .item-image .meta {
+	height: 20px;
+	line-height: 20px;
+	text-align: center;
 }
 
-.wrapper-info .info-event-toggle:hover,
-.wrapper-log .log-macro-toggle:hover {
-	background-color: #333;
+.wrapper-main .item-image .data {
+	width: 320px;
+	height: 240px;
 }
 
-.wrapper-display .screen {
-	width: 640px;
-	height: 480px;
-}
-
-.wrapper-display .component,
-.wrapper-display .action {
-	position: absolute;
-	background-repeat: no-repeat;
-}
-
-.wrapper-display .component {
-	z-index: 100;
-}
-
-.wrapper-display .action {
-	z-index: 200;
+.wrapper-main .item-image img {
 	display: block;
-	width: 100%;
-	height: 100%;
-}
-
-.wrapper-display .text {
-	overflow: hidden;
-}
-
-body.debug .wrapper-display .button {
-	background-color: red;
-}
-
-body.debug .wrapper-display .slider {
-	background-color: green;
-}
-
-body.debug .wrapper-display .ad {
-	background-color: blue;
-}
-
-body.debug .wrapper-display .action {
-	display: block;
-	width: 100%;
-	height: 100%;
-	cursor: pointer;
-	cursor: hand;
-	outline: 1px solid red;
-	color: red;
-	font-size: 12px;
-	font-weight: bold;
-}
-
-.mCSB_scrollTools {
-	left: 318px;
-}
-
-.mCSB_scrollTools .mCSB_draggerContainer {
-	top: 104px;
-	bottom: 45px;
-}
-
-.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
-	width: 14px;
-	-webkit-border-radius: 0;
-	-moz-border-radius: 0;
-	border-radius: 0;
-}
-
-.mCSB_scrollTools .mCSB_draggerRail {
-	background-color: transparent;
+	max-width: 100%;
+	max-height: 100%;
+	margin: 0 auto;
 }
 
 .jsonview {
@@ -181,7 +114,6 @@ body.debug .wrapper-display .action {
 	background-color: white;
 	color: black;
 }
-
 
 /* ==========================================================================
    Media Queries

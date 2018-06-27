@@ -47,9 +47,9 @@ $.klan.app.viewer = function(element, options) {
 			plugin.previous.index = plugin.actual.index;
 			plugin.previous.id = plugin.actual.id;
 			plugin.actual.issue = issue;
-			plugin.actual.library = (typeof library === 'undefined') ? false : library;
-			plugin.actual.index = (typeof index === 'undefined') ? false : index;
-			plugin.actual.id = (typeof id === 'undefined') ? false : id;
+			plugin.actual.library = (typeof library === 'undefined') ? null : library;
+			plugin.actual.index = (typeof index === 'undefined') ? null : index;
+			plugin.actual.id = (typeof id === 'undefined') ? null : id;
 
 			if (plugin.actual.issue != plugin.previous.issue) {
 				manifest_load(function() {
@@ -57,43 +57,19 @@ $.klan.app.viewer = function(element, options) {
 				});
 			}
 
-// 			$.when.all([
-// 				$.klan.api.issue.images(plugin.actual.issue),
-// 				$.klan.api.issue.screens(plugin.actual.issue),
-// 				$.klan.api.issue.texts(plugin.actual.issue)
-// 			]).done(function(responses) {
-// 				plugin.cache.images = responses[0].images;
-// 				plugin.cache.screens = responses[1].screens;
-// 				plugin.cache.texts = responses[2].texts;
-// 
-// 				var screens_preload = []
-// 
-// 				$.each(plugin.cache.screens, function(screen_index, screen) {
-// 					screens_preload.push($.klan.api.issue.screens(plugin.actual.issue, screen_index));
-// 				});
-// 
-// 				$.when.all(
-// 					screens_preload
-// 				).done(function(responses) {
-// 					plugin.cache.texts_indexed = {}
-// 					$.each(plugin.cache.texts, function(text_index, text) {
-// 						plugin.cache.texts_indexed[text.name.replace('/', '\\')] = text_index;
-// 					});
-// 
-// 					plugin.engine = {
-// 						'ads': {},
-// 						'buttons': {},
-// 						'events': {},
-// 						'ivars': {},
-// 						'screen': null,
-// 						'svars': {},
-// 						'text': null
-// 					}
-// 
-// 					log_empty();
-// 					screen_load();
-// 				});
-// 			});
+			if (
+				plugin.actual.library != plugin.previous.library ||
+				plugin.actual.index != plugin.previous.index
+			) {
+				if (plugin.actual.index) {
+					library_load(function() {
+						library_render(true);
+					});
+				}
+				else {
+					// TODO main_clear
+				}
+			}
 		});
 
 		function hasher_init(hash_current) {
@@ -111,6 +87,7 @@ $.klan.app.viewer = function(element, options) {
 
 		wrappers_prepare();
 		manifest_prepare();
+		library_prepare();
 
 		hasher.initialized.add(hasher_init);
 		hasher.changed.add(hasher_parse);
@@ -134,7 +111,7 @@ $.klan.app.viewer = function(element, options) {
 
 
 
-	// ******************************************* screen *******************************************
+	// ******************************************* manifest *******************************************
 	var manifest_prepare = function() {
 	}
 
@@ -169,9 +146,10 @@ $.klan.app.viewer = function(element, options) {
 				if (libraries) {
 					$.each(libraries, function(library_index, library) {
 						output_libraries.push(sprintf(
-							'<li data-jstree=\'{"icon":"jstree-file"}\'><a href="#/%s/%s/%s">%s</a></li>',
+							'<li data-jstree=\'{"icon":"jstree-file"}\'><a href="#/%s/%s/%s">[%s] %s</a></li>',
 							plugin.actual.issue,
 							libraries_index,
+							library_index,
 							library_index,
 							library.path
 						));
@@ -199,21 +177,93 @@ $.klan.app.viewer = function(element, options) {
 			);
 
 			plugin.wrappers.aside.html(output);
+
 			$('.manifest', plugin.wrappers.aside)
-			.on('changed.jstree', function (e, data) {
-				hasher.replaceHash(data.node.a_attr.href.replace('#/', ''));
-			})
-			.jstree({
-				'core': {
-					'themes': {
-						'variant': 'small'
-					}
-				},
-				'plugins': [
-					'sort',
-					'wholerow'
-				]
-			});
+				.on('changed.jstree', function (e, data) {
+					hasher.replaceHash(data.node.a_attr.href.replace('#/', ''));
+				})
+				.jstree({
+					'core': {
+						'themes': {
+							'variant': 'small'
+						}
+					},
+					'plugins': [
+						'sort',
+						'wholerow'
+					]
+				});
+		}
+	}
+
+
+
+	// ******************************************* library *******************************************
+	var library_prepare = function() {
+	}
+
+
+
+	var library_load = function(callback) {
+		var library_preload = []
+
+		if (plugin.actual.library == 'images') {
+			library_preload.push($.klan.api.issue.images(plugin.actual.issue, plugin.actual.index));
+		}
+
+		$.when.all(
+			library_preload
+		).done(function(responses) {
+			plugin.cache.library = responses[0];
+
+			if (typeof callback !== 'undefined') {
+				callback();
+			}
+		});
+	}
+
+
+
+	var library_render = function(force) {
+		force = (typeof force === 'undefined') ? false : force;
+
+		var output = '';
+ 
+		if (force) {
+			var output_library = [];
+
+			if (plugin.actual.library == 'images') {
+				var image_max_width = 320;
+				var image_max_height = 240;
+				var image_display_height;
+
+				$.each(plugin.cache.library.images, function(image_index, image) {
+					image_display_height = image.width > image_max_width ?
+						image.height * (image_max_width / image.width) :
+						image.height;
+					image_display_height = image_display_height <= image_max_height ?
+						image_display_height :
+						image_max_height;
+
+					output_library.push(sprintf(
+						'<div class="item item-image"><div class="meta">[%s] %sx%s</div><div class="data"><img src="https://api.klan2016.cz/%s/images/%s/%04d.png" style="margin-top:%spx;" /></div></div>',
+						image_index,
+						image.width,
+						image.height,
+						plugin.actual.issue,
+						plugin.actual.index,
+						image_index,
+						Math.round((image_max_height - image_display_height) / 2)
+					));
+				});
+			}
+
+			output += sprintf(
+				'%s',
+				output_library.join('')
+			);
+
+			plugin.wrappers.main.html(output);
 		}
 	}
 
