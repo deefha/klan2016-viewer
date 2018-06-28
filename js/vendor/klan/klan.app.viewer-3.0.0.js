@@ -236,6 +236,8 @@ $.klan.app.viewer = function(element, options) {
 				var image_max_width = 320;
 				var image_max_height = 240;
 				var image_display_height;
+				var image_zoom;
+				var image_url;
 
 				$.each(plugin.cache.library.images, function(image_index, image) {
 					image_display_height = image.width > image_max_width ?
@@ -244,16 +246,24 @@ $.klan.app.viewer = function(element, options) {
 					image_display_height = image_display_height <= image_max_height ?
 						image_display_height :
 						image_max_height;
+					image_zoom = image.width > image_max_width || image.height > image_max_height;
+					image_url = sprintf(
+						'https://api.klan2016.cz/%s/images/%s/%04d.png',
+						plugin.actual.issue,
+						plugin.actual.index,
+						image_index
+					);
 
 					output_library.push(sprintf(
-						'<div class="item item-image"><div class="meta">[%s] %sx%s</div><div class="data"><img src="https://api.klan2016.cz/%s/images/%s/%04d.png" style="margin-top:%spx;" /></div></div>',
+						'<div class="item item-image%s"><div class="meta">[%s] %sx%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
+						image_zoom ? ' zoom' : '',
 						image_index,
 						image.width,
 						image.height,
-						plugin.actual.issue,
-						plugin.actual.index,
-						image_index,
-						Math.round((image_max_height - image_display_height) / 2)
+						image_zoom ? sprintf('<a href="%s" data-featherlight="image">', image_url) : '',
+						image_url,
+						Math.round((image_max_height - image_display_height) / 2),
+						image_zoom ? '</a>' : ''
 					));
 				});
 			}
