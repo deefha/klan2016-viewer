@@ -58,6 +58,7 @@ $.klan.app.viewer = function(element, options) {
 			}
 
 			if (
+				plugin.actual.issue != plugin.previous.issue ||
 				plugin.actual.library != plugin.previous.library ||
 				plugin.actual.index != plugin.previous.index
 			) {
