@@ -80,11 +80,7 @@ body {
 	padding: 10px 0 10px 210px;
 }
 
-.wrapper-main .item.zoom {
-	color: green;
-}
-
-.wrapper-main .item-image {
+.wrapper-main .item {
 	float: left;
 	width: 320px;
 	height: 260px;
@@ -94,22 +90,34 @@ body {
 	border: 1px solid #ddd;
 }
 
-.wrapper-main .item-image .meta {
+.wrapper-main .item-font {
+	height: 340px;
+}
+
+.wrapper-main .item.zoom {
+	color: green;
+}
+
+.wrapper-main .item .meta {
 	height: 20px;
 	line-height: 20px;
 	text-align: center;
 }
 
-.wrapper-main .item-image .data {
+.wrapper-main .item .data {
 	width: 320px;
 	height: 240px;
 }
 
-.wrapper-main .item-image img {
+.wrapper-main .item img {
 	display: block;
 	max-width: 100%;
 	max-height: 100%;
 	margin: 0 auto;
+}
+
+.wrapper-main .item-font img {
+	background-color: black;
 }
 
 .jsonview {

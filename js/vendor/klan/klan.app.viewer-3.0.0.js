@@ -60,7 +60,8 @@ $.klan.app.viewer = function(element, options) {
 			if (
 				plugin.actual.issue != plugin.previous.issue ||
 				plugin.actual.library != plugin.previous.library ||
-				plugin.actual.index != plugin.previous.index
+				plugin.actual.index != plugin.previous.index ||
+				plugin.actual.id != plugin.previous.id
 			) {
 				if (plugin.actual.index) {
 					library_load(function() {
@@ -124,9 +125,28 @@ $.klan.app.viewer = function(element, options) {
 		]).done(function(responses) {
 			plugin.cache.manifest = responses[0];
 
-			if (typeof callback !== 'undefined') {
-				callback();
-			}
+			var preload = []
+
+			$.each(plugin.cache.manifest.libraries, function(libraries_index, libraries) {
+				if (libraries) {
+					$.each(libraries, function(library_index, library) {
+						if (libraries_index == 'fonts') {
+							preload.push($.klan.api.issue.fonts(plugin.actual.issue, library_index));
+						}
+						else if (libraries_index == 'images') {
+							preload.push($.klan.api.issue.images(plugin.actual.issue, library_index));
+						}
+					});
+				}
+			});
+
+			$.when.all(
+				preload
+			).done(function(responses) {
+				if (typeof callback !== 'undefined') {
+					callback();
+				}
+			});
 		});
 	}
 
@@ -146,19 +166,49 @@ $.klan.app.viewer = function(element, options) {
 
 				if (libraries) {
 					$.each(libraries, function(library_index, library) {
+						var output_items = []
+
+						if (libraries_index == 'fonts') {
+							$.each($.klan.api.issue.fonts(plugin.actual.issue, library_index).fonts, function(font_index, font) {
+								output_items.push(sprintf(
+									'<li id="tree-%s-%s-%s-%s" data-jstree=\'{"icon":"jstree-file"}\'><a href="#/%s/%s/%s/%s">%s</a></li>',
+									plugin.actual.issue,
+									libraries_index,
+									library_index,
+									font_index,
+									plugin.actual.issue,
+									libraries_index,
+									library_index,
+									font_index,
+									font_index
+								));
+							});
+						}
+
 						output_libraries.push(sprintf(
-							'<li data-jstree=\'{"icon":"jstree-file"}\'><a href="#/%s/%s/%s">[%s] %s</a></li>',
+							'<li id="tree-%s-%s-%s" data-jstree=\'{"icon":"jstree-file"}\'><a href="#/%s/%s/%s">[%s] %s</a>%s</li>',
+							plugin.actual.issue,
+							libraries_index,
+							library_index,
 							plugin.actual.issue,
 							libraries_index,
 							library_index,
 							library_index,
-							library.path
+							library.path,
+							output_items.length ?
+								sprintf(
+									'<ul>%s</ul>',
+									output_items.join('')
+								) :
+								''
 						));
 					});
 				}
 
 				output_manifest.push(sprintf(
-					'<li data-jstree=\'{"disabled":%s}\'>%s%s</li>',
+					'<li id="tree-%s-%s" data-jstree=\'{"disabled":%s}\'>%s%s</li>',
+					plugin.actual.issue,
+					libraries_index,
 					output_libraries.length ?
 						'false' :
 						'true',
@@ -181,10 +231,13 @@ $.klan.app.viewer = function(element, options) {
 
 			$('.manifest', plugin.wrappers.aside)
 				.on('changed.jstree', function (e, data) {
-					hasher.replaceHash(data.node.a_attr.href.replace('#/', ''));
+					if (data && data.node) {
+						hasher.replaceHash(data.node.a_attr.href.replace('#/', ''));
+					}
 				})
 				.jstree({
 					'core': {
+						'check_callback': true,
 						'themes': {
 							'variant': 'small'
 						}
@@ -206,14 +259,17 @@ $.klan.app.viewer = function(element, options) {
 
 
 	var library_load = function(callback) {
-		var library_preload = []
+		var preload = [];
 
-		if (plugin.actual.library == 'images') {
-			library_preload.push($.klan.api.issue.images(plugin.actual.issue, plugin.actual.index));
+		if (plugin.actual.library == 'fonts') {
+			preload.push($.klan.api.issue.fonts(plugin.actual.issue, plugin.actual.index));
+		}
+		else if (plugin.actual.library == 'images') {
+			preload.push($.klan.api.issue.images(plugin.actual.issue, plugin.actual.index));
 		}
 
 		$.when.all(
-			library_preload
+			preload
 		).done(function(responses) {
 			plugin.cache.library = responses[0];
 
@@ -233,7 +289,46 @@ $.klan.app.viewer = function(element, options) {
 		if (force) {
 			var output_library = [];
 
-			if (plugin.actual.library == 'images') {
+			if (
+				plugin.actual.library == 'fonts' &&
+				plugin.actual.id
+			) {
+				var image_max_width = 320;
+				var image_max_height = 320;
+				var image_display_height;
+				var image_zoom;
+				var image_url;
+
+				$.each(plugin.cache.library.fonts[plugin.actual.id], function(variant_index, variant) {
+// 					image_display_height = image.width > image_max_width ?
+// 						image.height * (image_max_width / image.width) :
+// 						image.height;
+// 					image_display_height = image_display_height <= image_max_height ?
+// 						image_display_height :
+// 						image_max_height;
+// 					image_zoom = image.width > image_max_width || image.height > image_max_height;
+					image_url = sprintf(
+						'https://api.klan2016.cz/%s/fonts/%s/%02d/%s.png',
+						plugin.actual.issue,
+						plugin.actual.index,
+						plugin.actual.id,
+						variant_index
+					);
+
+					output_library.push(sprintf(
+						'<div class="item item-font%s"><div class="meta">[%s] %s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
+						image_zoom ? ' zoom' : '',
+						plugin.actual.id,
+						variant_index,
+						image_zoom ? sprintf('<a href="%s" data-featherlight="image">', image_url) : '',
+						image_url,
+// 						Math.round((image_max_height - image_display_height) / 2),
+						0,
+						image_zoom ? '</a>' : ''
+					));
+				});
+			}
+			else if (plugin.actual.library == 'images') {
 				var image_max_width = 320;
 				var image_max_height = 240;
 				var image_display_height;
