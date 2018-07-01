@@ -54,23 +54,11 @@ $.klan.app.viewer = function(element, options) {
 			if (plugin.actual.issue != plugin.previous.issue) {
 				manifest_load(function() {
 					manifest_render(true);
+					common_onchange();
 				});
 			}
-
-			if (
-				plugin.actual.issue != plugin.previous.issue ||
-				plugin.actual.library != plugin.previous.library ||
-				plugin.actual.index != plugin.previous.index ||
-				plugin.actual.id != plugin.previous.id
-			) {
-				if (plugin.actual.index) {
-					library_load(function() {
-						library_render(true);
-					});
-				}
-				else {
-					// TODO main_clear
-				}
+			else {
+				common_onchange();
 			}
 		});
 
@@ -94,6 +82,42 @@ $.klan.app.viewer = function(element, options) {
 		hasher.initialized.add(hasher_init);
 		hasher.changed.add(hasher_parse);
 		hasher.init();
+	}
+
+
+
+// ******************************************* common *******************************************
+	var common_onchange = function() {
+		if (
+			plugin.actual.issue != plugin.previous.issue ||
+			plugin.actual.library != plugin.previous.library ||
+			plugin.actual.index != plugin.previous.index ||
+			plugin.actual.id != plugin.previous.id
+		) {
+			var tree = $.jstree.reference($('.manifest', plugin.wrappers.aside));
+			var node = sprintf(
+				'#tree-%s%s%s%s',
+				plugin.actual.issue,
+				plugin.actual.library ? sprintf('-%s', plugin.actual.library) : '',
+				plugin.actual.index ? sprintf('-%s', plugin.actual.index) : '',
+				plugin.actual.id ? sprintf('-%s', plugin.actual.id) : ''
+			);
+
+			if (!tree.is_selected(node)) {
+				tree.deselect_all(true);
+				tree.select_node(node, true);
+				tree.redraw(true);
+			}
+
+			if (plugin.actual.index) {
+				library_load(function() {
+					library_render(true);
+				});
+			}
+			else {
+				// TODO main_clear
+			}
+		}
 	}
 
 
@@ -236,13 +260,13 @@ $.klan.app.viewer = function(element, options) {
 					}
 				})
 				.jstree({
-					'core': {
-						'check_callback': true,
-						'themes': {
-							'variant': 'small'
+					core: {
+						check_callback: true,
+						themes: {
+							variant: 'small'
 						}
 					},
-					'plugins': [
+					plugins: [
 						'sort',
 						'wholerow'
 					]
