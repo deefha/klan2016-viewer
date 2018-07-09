@@ -8,7 +8,7 @@ $.klan.api.issue = $.klan.api.issue || {};
 
 $.klan.api.issue.manifest = function(issue, reload) {
 	var issue = typeof issue !== 'undefined' ? issue : false;
-	var key = sprintf('%s',
+	var key = sprintf('%s/manifest',
 		issue
 	);
 
