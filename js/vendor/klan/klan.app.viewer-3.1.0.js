@@ -14,7 +14,7 @@ $.klan.app.viewer = function(element, options) {
 
 	plugin.meta = {
 		name: 'klan.app.viewer',
-		version: '1.0.0'
+		version: '3.1.0'
 	}
 
 	plugin.settings = {}
@@ -32,56 +32,67 @@ $.klan.app.viewer = function(element, options) {
 			$('body').addClass('debug');
 		}
 
-		plugin.actual.issue = null;
-		plugin.actual.library = null;
-		plugin.actual.index = null;
-		plugin.actual.id = null;
-		plugin.previous.issue = null;
-		plugin.previous.library = null;
-		plugin.previous.index = null;
-		plugin.previous.id = null;
+		$.when.all([
+			$.klan.api.manifest()
+		]).done(function(responses) {
+			plugin.cache.manifest = responses[0];
 
-		crossroads.addRoute('/{issue}/:library:/:index:/:id:', function(issue, library, index, id) {
-			plugin.previous.issue = plugin.actual.issue;
-			plugin.previous.library = plugin.actual.library;
-			plugin.previous.index = plugin.actual.index;
-			plugin.previous.id = plugin.actual.id;
-			plugin.actual.issue = issue;
-			plugin.actual.library = (typeof library === 'undefined') ? null : library;
-			plugin.actual.index = (typeof index === 'undefined') ? null : index;
-			plugin.actual.id = (typeof id === 'undefined') ? null : id;
+			plugin.cache.issue = {}
 
-			if (plugin.actual.issue != plugin.previous.issue) {
-				manifest_load(function() {
-					manifest_render(true);
+			plugin.actual.issue = null;
+			plugin.actual.library = null;
+			plugin.actual.index = null;
+			plugin.actual.id = null;
+			plugin.previous.issue = null;
+			plugin.previous.library = null;
+			plugin.previous.index = null;
+			plugin.previous.id = null;
+
+			crossroads.addRoute('/{issue}/:library:/:index:/:id:', function(issue, library, index, id) {
+				plugin.previous.issue = plugin.actual.issue;
+				plugin.previous.library = plugin.actual.library;
+				plugin.previous.index = plugin.actual.index;
+				plugin.previous.id = plugin.actual.id;
+				plugin.actual.issue = issue;
+				plugin.actual.library = (typeof library === 'undefined') ? null : library;
+				plugin.actual.index = (typeof index === 'undefined') ? null : index;
+				plugin.actual.id = (typeof id === 'undefined') ? null : id;
+
+				if (plugin.actual.issue != plugin.previous.issue) {
+					issue_manifest_load(function() {
+						issue_manifest_render(true);
+						common_onchange();
+					});
+				}
+				else {
 					common_onchange();
-				});
+				}
+			});
+
+			function hasher_init(hash_current) {
+				if (hash_current == '') {
+					hasher.replaceHash(plugin.settings.issue);
+				}
+				else {
+					crossroads.parse(hash_current);
+				}
 			}
-			else {
-				common_onchange();
+
+			function hasher_parse(hash_new, hash_old) {
+				crossroads.parse(hash_new);
 			}
+
+			wrappers_prepare();
+			manifest_prepare();
+			issue_manifest_prepare();
+			library_prepare();
+
+			manifest_render(true);
+
+			hasher.initialized.add(hasher_init);
+			hasher.changed.add(hasher_parse);
+			hasher.init();
 		});
-
-		function hasher_init(hash_current) {
-			if (hash_current == '') {
-				hasher.replaceHash(plugin.settings.issue);
-			}
-			else {
-				crossroads.parse(hash_current);
-			}
-		}
-
-		function hasher_parse(hash_new, hash_old) {
-			crossroads.parse(hash_new);
-		}
-
-		wrappers_prepare();
-		manifest_prepare();
-		library_prepare();
-
-		hasher.initialized.add(hasher_init);
-		hasher.changed.add(hasher_parse);
-		hasher.init();
 	}
 
 
@@ -94,7 +105,7 @@ $.klan.app.viewer = function(element, options) {
 			plugin.actual.index != plugin.previous.index ||
 			plugin.actual.id != plugin.previous.id
 		) {
-			var tree = $.jstree.reference($('.manifest', plugin.wrappers.aside));
+			var tree = $.jstree.reference($('.issue-manifest', plugin.wrappers.aside));
 			var node = sprintf(
 				'#tree-%s%s%s%s',
 				plugin.actual.issue,
@@ -139,19 +150,64 @@ $.klan.app.viewer = function(element, options) {
 
 	// ******************************************* manifest *******************************************
 	var manifest_prepare = function() {
+		plugin.wrappers.aside.append('<div class="manifest"></div>');
 	}
 
 
 
 	var manifest_load = function(callback) {
+	}
+
+
+
+	var manifest_render = function(force) {
+		force = (typeof force === 'undefined') ? false : force;
+
+		var output = '';
+ 
+		if (force) {
+			var output_manifest = [];
+
+			$.each(plugin.cache.manifest, function(manifest_index, manifest) {
+				output_manifest.push(sprintf(
+					'<option value="%s">#%s</option>',
+					manifest,
+					manifest
+				));
+			});
+
+			output += sprintf(
+				'<select>%s</select>',
+				output_manifest.join('')
+			);
+
+			$('.manifest', plugin.wrappers.aside).html(output);
+
+			$('.manifest select', plugin.wrappers.aside)
+				.on('change', function() {
+					hasher.replaceHash(sprintf('%s', this.value));
+				});
+		}
+	}
+
+
+
+	// ******************************************* issue manifest *******************************************
+	var issue_manifest_prepare = function() {
+		plugin.wrappers.aside.append('<div class="issue-manifest"></div>');
+	}
+
+
+
+	var issue_manifest_load = function(callback) {
 		$.when.all([
 			$.klan.api.issue.manifest(plugin.actual.issue)
 		]).done(function(responses) {
-			plugin.cache.manifest = responses[0];
+			plugin.cache.issue.manifest = responses[0];
 
 			var preload = []
 
-			$.each(plugin.cache.manifest.libraries, function(libraries_index, libraries) {
+			$.each(plugin.cache.issue.manifest.libraries, function(libraries_index, libraries) {
 				if (libraries) {
 					$.each(libraries, function(library_index, library) {
 						if (libraries_index == 'fonts') {
@@ -176,7 +232,7 @@ $.klan.app.viewer = function(element, options) {
 
 
 
-	var manifest_render = function(force) {
+	var issue_manifest_render = function(force) {
 		force = (typeof force === 'undefined') ? false : force;
 
 		var output = '';
@@ -185,7 +241,7 @@ $.klan.app.viewer = function(element, options) {
 			var output_manifest = [];
 			var output_libraries = [];
 
-			$.each(plugin.cache.manifest.libraries, function(libraries_index, libraries) {
+			$.each(plugin.cache.issue.manifest.libraries, function(libraries_index, libraries) {
 				output_libraries = [];
 
 				if (libraries) {
@@ -247,14 +303,20 @@ $.klan.app.viewer = function(element, options) {
 			});
 
 			output += sprintf(
-				'<div class="manifest"><ul>%s</ul></div>',
+				'<ul>%s</ul>',
 				output_manifest.join('')
 			);
 
-			plugin.wrappers.aside.html(output);
+			var tree = $.jstree.reference($('.issue-manifest', plugin.wrappers.aside));
+			
+			if (tree) {
+				tree.destroy();
+			}
 
-			$('.manifest', plugin.wrappers.aside)
-				.on('changed.jstree', function (e, data) {
+			$('.issue-manifest', plugin.wrappers.aside).html(output);
+
+			$('.issue-manifest', plugin.wrappers.aside)
+				.on('changed.jstree', function(e, data) {
 					if (data && data.node) {
 						hasher.replaceHash(data.node.a_attr.href.replace('#/', ''));
 					}
@@ -295,7 +357,7 @@ $.klan.app.viewer = function(element, options) {
 		$.when.all(
 			preload
 		).done(function(responses) {
-			plugin.cache.library = responses[0];
+			plugin.cache.issue.library = responses[0];
 
 			if (typeof callback !== 'undefined') {
 				callback();
@@ -323,7 +385,7 @@ $.klan.app.viewer = function(element, options) {
 				var image_zoom;
 				var image_url;
 
-				$.each(plugin.cache.library.fonts[plugin.actual.id], function(variant_index, variant) {
+				$.each(plugin.cache.issue.library.fonts[plugin.actual.id], function(variant_index, variant) {
 // 					image_display_height = image.width > image_max_width ?
 // 						image.height * (image_max_width / image.width) :
 // 						image.height;
@@ -359,7 +421,7 @@ $.klan.app.viewer = function(element, options) {
 				var image_zoom;
 				var image_url;
 
-				$.each(plugin.cache.library.images, function(image_index, image) {
+				$.each(plugin.cache.issue.library.images, function(image_index, image) {
 					image_display_height = image.width > image_max_width ?
 						image.height * (image_max_width / image.width) :
 						image.height;
@@ -404,11 +466,11 @@ $.klan.app.viewer = function(element, options) {
 		$.when.all([
 			$.klan.api.issue.screens(plugin.actual.issue, plugin.actual.screen)
 		]).done(function(responses) {
-			plugin.cache.screen = responses[0];
+			plugin.cache.issue.screen = responses[0];
 
-			log(sprintf('screen s:%s, type_1:%s', plugin.actual.screen, plugin.cache.screen.type_1), '>>');
+			log(sprintf('screen s:%s, type_1:%s', plugin.actual.screen, plugin.cache.issue.screen.type_1), '>>');
 
-			if (plugin.cache.screen.type_1 == 0) {
+			if (plugin.cache.issue.screen.type_1 == 0) {
 				plugin.engine.events = {};
 				plugin.engine.screen = null;
 				plugin.engine.buttons = {};
@@ -417,14 +479,14 @@ $.klan.app.viewer = function(element, options) {
 			}
 
 			log(sprintf('events s:%s', plugin.actual.screen), '>>');
-			$.each(plugin.cache.screen.events, function(event_index, event) {
+			$.each(plugin.cache.issue.screen.events, function(event_index, event) {
 				log_macro(sprintf('s:%s, e:%s, b:%s', plugin.actual.screen, event_index, event.binding), event.macros);
 				plugin.engine.events[event.binding] = event.macros;
 			});
 			log(sprintf('events s:%s', plugin.actual.screen), '<<');
 
 			log(sprintf('macros s:%s', plugin.actual.screen), '>>');
-			$.each(plugin.cache.screen.macros, function(macro_index, macro) {
+			$.each(plugin.cache.issue.screen.macros, function(macro_index, macro) {
 				parse_macro(macro, macro_index);
 			});
 			log(sprintf('macros s:%s', plugin.actual.screen), '<<');
@@ -463,8 +525,8 @@ $.klan.app.viewer = function(element, options) {
 					plugin.engine.text.area.topleft_y,
 					plugin.actual.issue,
 					plugin.engine.text.content.startsWith('^') ?
-						plugin.cache.texts_indexed[plugin.engine.svars[plugin.engine.text.content.substr(1)]] :
-						plugin.cache.texts_indexed[plugin.engine.text.content]
+						plugin.cache.issue.texts_indexed[plugin.engine.svars[plugin.engine.text.content.substr(1)]] :
+						plugin.cache.issue.texts_indexed[plugin.engine.text.content]
 				));
 
 				$(sprintf(
@@ -490,7 +552,7 @@ $.klan.app.viewer = function(element, options) {
 			}
 
 			$.each(plugin.engine.buttons, function(button_index, button) {
-				var image = plugin.cache.images[button.image];
+				var image = plugin.cache.issue.images[button.image];
 
 				plugin.wrappers.display.append(sprintf(
 					'<div id="component-%s-%s" data-id="%s" class="component button" style="width:%spx;height:%spx;left:%spx;top:%spx;background-image:url(https://api.klan2016.cz/%s/images/0/%04d.png);"></div>',
@@ -534,7 +596,7 @@ $.klan.app.viewer = function(element, options) {
 			});
 
 			$.each(plugin.engine.ads, function(ad_index, ad) {
-				var image = plugin.cache.images[ad.image];
+				var image = plugin.cache.issue.images[ad.image];
 
 				plugin.wrappers.display.append(sprintf(
 					'<div id="component-%s-%s" class="component ad" style="width:%spx;height:%spx;left:%spx;top:%spx;background-image:url(https://api.klan2016.cz/%s/images/0/%04d.png);"></div>',
