@@ -108,4 +108,26 @@ $.klan.api.browser_supports_html5_storage = function() {
 }
 $.klan.api.html5_storage = $.klan.api.browser_supports_html5_storage();
 
+
+
+$.klan.api.manifest = function(reload) {
+	var key = 'manifest';
+
+	if (reload || !$.klan.api.cache_get(key)) {
+		return $.ajax({
+			url: $.klan.api.url(key),
+			dataType: 'jsonp',
+			success: function(response) {
+			}
+		})
+		.then(function(response) {
+			$.klan.api.cache_set(key, response);
+			return $.klan.api.cache_get(key);
+		});
+	}
+	else {
+		return $.klan.api.cache_get(key);
+	}
+}
+
 })(jQuery);
