@@ -120,6 +120,14 @@ body {
 	background-color: black;
 }
 
+.manifest {
+	margin-bottom: 10px;
+}
+
+.manifest select {
+	width: 100%;
+}
+
 .jsonview {
 	margin-bottom: 5px;
 	font-size: 10px;
