@@ -414,6 +414,7 @@ $.klan.app.viewer = function(element, options) {
 					));
 				});
 			}
+
 			else if (
 				plugin.actual.library == 'fonts' &&
 				plugin.actual.id
@@ -453,6 +454,7 @@ $.klan.app.viewer = function(element, options) {
 					));
 				});
 			}
+
 			else if (plugin.actual.library == 'images') {
 				var image_max_width = 320;
 				var image_max_height = 240;
@@ -476,11 +478,12 @@ $.klan.app.viewer = function(element, options) {
 					);
 
 					output_library.push(sprintf(
-						'<div class="item item-image%s"><div class="meta">[%s] %sx%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
+						'<div class="item item-image%s"><div class="meta">#%s %sx%s M%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
 						image_zoom ? ' zoom' : '',
 						image_index,
 						image.width,
 						image.height,
+						image.mode,
 						image_zoom ? sprintf('<a href="%s" data-featherlight="image">', image_url) : '',
 						image_url,
 						Math.round((image_max_height - image_display_height) / 2),
