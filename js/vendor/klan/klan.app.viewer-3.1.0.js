@@ -256,7 +256,7 @@ $.klan.app.viewer = function(element, options) {
 						if (libraries_index == 'fonts') {
 							$.each($.klan.api.issue.fonts(plugin.actual.issue, library_index).fonts, function(font_index, font) {
 								output_items.push(sprintf(
-									'<li id="tree-%s-%s-%s-%s" data-jstree=\'{"icon":"jstree-file"}\'><a href="#/%s/%s/%s/%s">%s</a></li>',
+									'<li id="tree-%s-%s-%s-%s" data-jstree=\'{"icon":"jstree-file"}\'><a href="#/%s/%s/%s/%s">%2s</a></li>',
 									plugin.actual.issue,
 									libraries_index,
 									library_index,
