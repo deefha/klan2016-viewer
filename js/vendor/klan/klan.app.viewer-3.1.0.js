@@ -124,7 +124,7 @@ $.klan.app.viewer = function(element, options) {
 				});
 			}
 			else {
-				// TODO main_clear
+				library_clear();
 			}
 		}
 	}
@@ -497,6 +497,14 @@ $.klan.app.viewer = function(element, options) {
 
 			plugin.wrappers.main.html(output);
 		}
+	}
+
+
+
+	var library_clear = function() {
+		var output = '';
+ 
+		plugin.wrappers.main.html(output);
 	}
 
 
