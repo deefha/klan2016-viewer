@@ -58,6 +58,7 @@ $.klan.app.viewer = function(element, options) {
 
 				if (plugin.actual.issue != plugin.previous.issue) {
 					issue_manifest_load(function() {
+						manifest_render();
 						issue_manifest_render(true);
 						common_onchange();
 					});
@@ -118,13 +119,12 @@ $.klan.app.viewer = function(element, options) {
 				tree.redraw(true);
 			}
 
+			library_clear();
+
 			if (plugin.actual.index) {
 				library_load(function() {
 					library_render(true);
 				});
-			}
-			else {
-				library_clear();
 			}
 		}
 	}
@@ -186,6 +186,10 @@ $.klan.app.viewer = function(element, options) {
 					hasher.replaceHash(sprintf('%s', this.value));
 				});
 		}
+
+		if ($('.manifest select', plugin.wrappers.aside).val() != plugin.actual.issue) {
+			$('.manifest select', plugin.wrappers.aside).val(plugin.actual.issue);
+		}
 	}
 
 
@@ -208,7 +212,10 @@ $.klan.app.viewer = function(element, options) {
 			$.each(plugin.cache.issue.manifest.libraries, function(libraries_index, libraries) {
 				if (libraries) {
 					$.each(libraries, function(library_index, library) {
-						if (libraries_index == 'fonts') {
+						if (libraries_index == 'cursors') {
+							preload.push($.klan.api.issue.cursors(plugin.actual.issue, library_index));
+						}
+						else if (libraries_index == 'fonts') {
 							preload.push($.klan.api.issue.fonts(plugin.actual.issue, library_index));
 						}
 						else if (libraries_index == 'images') {
