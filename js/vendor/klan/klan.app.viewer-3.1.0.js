@@ -169,7 +169,7 @@ $.klan.app.viewer = function(element, options) {
 
 			$.each(plugin.cache.manifest, function(manifest_index, manifest) {
 				output_manifest.push(sprintf(
-					'<option value="%s">Vydání #%s</option>',
+					'<option value="%s">Issue #%s</option>',
 					manifest,
 					manifest
 				));
