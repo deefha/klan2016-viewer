@@ -94,11 +94,20 @@ body {
 
 .wrapper-main .item {
 	float: left;
-	width: 320px;
 	margin: 0 10px 10px 0;
 	padding: 0 5px 5px 5px;
 	background: #eee;
 	border: 1px solid #ddd;
+}
+
+.wrapper-main .item-cursor,
+.wrapper-main .item-image,
+.wrapper-main .item-font {
+	width: 320px;
+}
+
+.wrapper-main .item-text-raw {
+	width: 441px;
 }
 
 .wrapper-main .item-cursor,
@@ -108,14 +117,6 @@ body {
 
 .wrapper-main .item-font {
 	height: 340px;
-}
-
-.wrapper-main .item-text {
-	width: 310px;
-}
-
-.wrapper-main .item-text-raw {
-	width: 441px;
 }
 
 .wrapper-main .item.zoom {
@@ -128,8 +129,14 @@ body {
 	text-align: center;
 }
 
-.wrapper-main .item .data {
+.wrapper-main .item-cursor .data,
+.wrapper-main .item-image .data,
+.wrapper-main .item-font .data {
 	width: 320px;
+}
+
+.wrapper-main .item-text-raw .data {
+	width: 441px;
 }
 
 .wrapper-main .item-cursor .data,
@@ -139,14 +146,6 @@ body {
 
 .wrapper-main .item-font .data {
 	height: 320px;
-}
-
-.wrapper-main .item-text .data {
-	width: 310px;
-}
-
-.wrapper-main .item-text-raw .data {
-	width: 441px;
 }
 
 .wrapper-main .item img {
