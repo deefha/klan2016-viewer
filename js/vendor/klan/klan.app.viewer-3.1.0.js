@@ -549,11 +549,12 @@ $.klan.app.viewer = function(element, options) {
 						);
 
 						output_library.push(sprintf(
-							'<div class="item item-text%s"><div class="meta">[%s] %s V%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
+							'<div class="item item-text%s"><div class="meta">[%s] %s V%s%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
 							image_zoom ? ' zoom' : '',
 							plugin.actual.id,
 							plugin.cache.issue.library.texts[plugin.actual.id].name,
 							variant_index,
+							variant.title ? sprintf('<br />%s', variant.title) : '',
 							image_zoom ? sprintf('<a href="%s" data-featherlight="image">', image_url) : '',
 							image_url,
 // 							Math.round((image_max_height - image_display_height) / 2),
