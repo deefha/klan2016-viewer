@@ -135,9 +135,10 @@ $.klan.app.viewer = function(element, options) {
 	var wrappers_prepare = function() {
 		$element.html(sprintf(
 			'<div class="klan-app-viewer clearfix">' +
-				'<div class="wrapper-aside"></div>' +
+				'<div class="wrapper-aside"><h1>KLAN viewer v%s (<a href="https://github.com/deefha/klan2016-viewer" target="_blank">GitHub</a>)<h1></div>' +
 				'<div class="wrapper-main clearfix"></div>' +
-			'</div>'
+			'</div>',
+			plugin.meta.version
 		));
 
 		plugin.wrappers.aside = $('.wrapper-aside', $element);
@@ -168,7 +169,7 @@ $.klan.app.viewer = function(element, options) {
 
 			$.each(plugin.cache.manifest, function(manifest_index, manifest) {
 				output_manifest.push(sprintf(
-					'<option value="%s">#%s</option>',
+					'<option value="%s">Vydání #%s</option>',
 					manifest,
 					manifest
 				));
@@ -587,6 +588,19 @@ $.klan.app.viewer = function(element, options) {
 						);
 					}
 				});
+			}
+
+			if (
+				plugin.actual.library == 'arklanoid' ||
+				plugin.actual.library == 'audio' ||
+				plugin.actual.library == 'descriptions' ||
+				plugin.actual.library == 'help' ||
+				plugin.actual.library == 'music' ||
+				plugin.actual.library == 'screens' ||
+				plugin.actual.library == 'screensaver' ||
+				plugin.actual.library == 'video'
+			) {
+				output_library.push('TODO :-)');
 			}
 
 			output += sprintf(
