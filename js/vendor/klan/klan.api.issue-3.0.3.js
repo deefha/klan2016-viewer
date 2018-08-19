@@ -31,6 +31,34 @@ $.klan.api.issue.manifest = function(issue, reload) {
 
 
 
+$.klan.api.issue.audio = function(issue, index, reload) {
+	var issue = typeof issue !== 'undefined' ? issue : false;
+	var index = typeof index !== 'undefined' ? index : false;
+	var reload = typeof reload !== 'undefined' ? reload : false;
+	var key = sprintf('%s/audio/%s',
+		issue,
+		index
+	);
+
+	if (reload || !$.klan.api.cache_get(key)) {
+		return $.ajax({
+			url: $.klan.api.url(key),
+			dataType: 'jsonp',
+			success: function(response) {
+			}
+		})
+		.then(function(response) {
+			$.klan.api.cache_set(key, response);
+			return $.klan.api.cache_get(key);
+		});
+	}
+	else {
+		return $.klan.api.cache_get(key);
+	}
+}
+
+
+
 $.klan.api.issue.cursors = function(issue, index, reload) {
 	var issue = typeof issue !== 'undefined' ? issue : false;
 	var index = typeof index !== 'undefined' ? index : false;
@@ -124,34 +152,6 @@ $.klan.api.issue.screens = function(issue, index, id, reload) {
 		issue,
 		index,
 		id ? sprintf('/%03d', id) : ''
-	);
-
-	if (reload || !$.klan.api.cache_get(key)) {
-		return $.ajax({
-			url: $.klan.api.url(key),
-			dataType: 'jsonp',
-			success: function(response) {
-			}
-		})
-		.then(function(response) {
-			$.klan.api.cache_set(key, response);
-			return $.klan.api.cache_get(key);
-		});
-	}
-	else {
-		return $.klan.api.cache_get(key);
-	}
-}
-
-
-
-$.klan.api.issue.sounds = function(issue, index, reload) {
-	var issue = typeof issue !== 'undefined' ? issue : false;
-	var index = typeof index !== 'undefined' ? index : false;
-	var reload = typeof reload !== 'undefined' ? reload : false;
-	var key = sprintf('%s/sounds/%s',
-		issue,
-		index
 	);
 
 	if (reload || !$.klan.api.cache_get(key)) {

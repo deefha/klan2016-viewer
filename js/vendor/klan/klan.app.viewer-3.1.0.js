@@ -213,6 +213,9 @@ $.klan.app.viewer = function(element, options) {
 			$.each(plugin.cache.issue.manifest.libraries, function(libraries_index, libraries) {
 				if (libraries) {
 					$.each(libraries, function(library_index, library) {
+						if (libraries_index == 'audio') {
+							preload.push($.klan.api.issue.audio(plugin.actual.issue, library_index));
+						}
 						if (libraries_index == 'cursors') {
 							preload.push($.klan.api.issue.cursors(plugin.actual.issue, library_index));
 						}
@@ -374,6 +377,9 @@ $.klan.app.viewer = function(element, options) {
 	var library_load = function(callback) {
 		var preload = [];
 
+		if (plugin.actual.library == 'audio') {
+			preload.push($.klan.api.issue.audio(plugin.actual.issue, plugin.actual.index));
+		}
 		if (plugin.actual.library == 'cursors') {
 			preload.push($.klan.api.issue.cursors(plugin.actual.issue, plugin.actual.index));
 		}
@@ -407,6 +413,27 @@ $.klan.app.viewer = function(element, options) {
  
 		if (force) {
 			var output_library = [];
+
+			if (plugin.actual.library == 'audio') {
+				var wave_url;
+
+				$.each(plugin.cache.issue.library.waves, function(wave_index, wave) {
+					wave_url = sprintf(
+						'https://api.klan2016.cz/%s/audio/%s/%04d.wav',
+						plugin.actual.issue,
+						plugin.actual.index,
+						wave_index
+					);
+
+					output_library.push(sprintf(
+						'<div class="item item-audio"><div class="meta">#%s %s M%s</div><div class="data"><audio src="%s" controls></audio></div></div>',
+						wave_index,
+						moment(Math.floor(wave.duration * 1000)).format('mm:ss.SSS'),
+						wave.mode,
+						wave_url
+					));
+				});
+			}
 
 			if (plugin.actual.library == 'cursors') {
 				var image_max_width = 320;
@@ -592,7 +619,6 @@ $.klan.app.viewer = function(element, options) {
 
 			if (
 				plugin.actual.library == 'arklanoid' ||
-				plugin.actual.library == 'audio' ||
 				plugin.actual.library == 'descriptions' ||
 				plugin.actual.library == 'help' ||
 				plugin.actual.library == 'music' ||
