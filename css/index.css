@@ -187,6 +187,16 @@ body {
 	background-color: white;
 }
 
+.wrapper-main .data .controls {
+	margin-top: 5px;
+	text-align: center;
+}
+
+.wrapper-main .data .controls button {
+	display: none;
+	margin: 0 5px;
+}
+
 /* ==========================================================================
    Media Queries
    ========================================================================== */

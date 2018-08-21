@@ -46,6 +46,8 @@ $.klan.app.viewer = function(element, options) {
 			plugin.previous.index = null;
 			plugin.previous.id = null;
 
+			plugin.actual.waveforms = {};
+
 			crossroads.addRoute('/{issue}/:library:/:index:/:id:', function(issue, library, index, id) {
 				plugin.previous.issue = plugin.actual.issue;
 				plugin.previous.library = plugin.actual.library;
@@ -426,14 +428,14 @@ $.klan.app.viewer = function(element, options) {
 					);
 
 					output_library.push(sprintf(
-						'<div class="item item-audio"><div class="meta">#%s %s M%s</div><div class="data"><audio src="%s" controls></audio><div id="waveform-%s" class="waveform" data-index="%s" data-url="%s"></div></div></div>',
+						'<div class="item item-audio"><div class="meta">#%s %s M%s</div><div class="data"><div id="waveform-%s" class="waveform" data-index="%s" data-url="%s"></div><div id="controls-%s" class="controls"><span class="loader">Loading...</span><button class="button-playpause">PLAY/PAUSE</button><button class="button-stop">STOP</button></div></div></div>',
 						wave_index,
 						moment(Math.floor(wave.duration * 1000)).format('mm:ss.SSS'),
 						wave.mode,
+						wave_index,
+						wave_index,
 						wave_url,
-						wave_index,
-						wave_index,
-						wave_url
+						wave_index
 					));
 				});
 			}
@@ -641,10 +643,30 @@ $.klan.app.viewer = function(element, options) {
 
 			if (plugin.actual.library == 'audio') {
 				$('.waveform', plugin.wrappers.main).each(function() {
-					var wavesurfer = WaveSurfer.create({
-						container: sprintf('#waveform-%s', $(this).data('index'))
+					var waveform = $(this);
+					var wave_index = waveform.data('index');
+					var wave_url = waveform.data('url');
+					var controls = $(sprintf('#controls-%s', wave_index), plugin.wrappers.main);
+
+					plugin.actual.waveforms[wave_index] = WaveSurfer.create({
+						container: sprintf('#waveform-%s', wave_index)
 					});
-					wavesurfer.load($(this).data('url'));
+					plugin.actual.waveforms[wave_index].load(wave_url);
+					plugin.actual.waveforms[wave_index].on('ready', function() {
+						plugin.actual.waveforms[wave_index].on('finish', function() {
+							plugin.actual.waveforms[wave_index].stop();
+						});
+
+						$('.button-playpause', controls).on('click', function() {
+							plugin.actual.waveforms[wave_index].playPause();
+						});
+						$('.button-stop', controls).on('click', function() {
+							plugin.actual.waveforms[wave_index].stop();
+						});
+
+						$('.loader', controls).hide();
+						$('button', controls).show();
+					});
 				});
 			}
 		}
@@ -655,6 +677,11 @@ $.klan.app.viewer = function(element, options) {
 	var library_clear = function() {
 		var output = '';
  
+		$.each(plugin.actual.waveforms, function(waveform_index, waveform) {
+			waveform.destroy();
+		});
+		plugin.actual.waveforms = {};
+
 		plugin.wrappers.main.html(output);
 	}
 
