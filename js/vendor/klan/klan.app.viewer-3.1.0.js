@@ -426,10 +426,13 @@ $.klan.app.viewer = function(element, options) {
 					);
 
 					output_library.push(sprintf(
-						'<div class="item item-audio"><div class="meta">#%s %s M%s</div><div class="data"><audio src="%s" controls></audio></div></div>',
+						'<div class="item item-audio"><div class="meta">#%s %s M%s</div><div class="data"><audio src="%s" controls></audio><div id="waveform-%s" class="waveform" data-index="%s" data-url="%s"></div></div></div>',
 						wave_index,
 						moment(Math.floor(wave.duration * 1000)).format('mm:ss.SSS'),
 						wave.mode,
+						wave_url,
+						wave_index,
+						wave_index,
 						wave_url
 					));
 				});
@@ -635,6 +638,15 @@ $.klan.app.viewer = function(element, options) {
 			);
 
 			plugin.wrappers.main.html(output);
+
+			if (plugin.actual.library == 'audio') {
+				$('.waveform', plugin.wrappers.main).each(function() {
+					var wavesurfer = WaveSurfer.create({
+						container: sprintf('#waveform-%s', $(this).data('index'))
+					});
+					wavesurfer.load($(this).data('url'));
+				});
+			}
 		}
 	}
 

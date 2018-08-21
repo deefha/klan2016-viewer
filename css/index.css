@@ -110,6 +110,10 @@ body {
 	border: 1px solid #ddd;
 }
 
+.wrapper-main .item-audio {
+	width: 640px;
+}
+
 .wrapper-main .item-cursor,
 .wrapper-main .item-image,
 .wrapper-main .item-font {
@@ -136,6 +140,10 @@ body {
 .wrapper-main .item .meta {
 	line-height: 20px;
 	text-align: center;
+}
+
+.wrapper-main .item-audio .data {
+	width: 640px;
 }
 
 .wrapper-main .item-cursor .data,
