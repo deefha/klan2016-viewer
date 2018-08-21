@@ -430,7 +430,9 @@ $.klan.app.viewer = function(element, options) {
 					output_library.push(sprintf(
 						'<div class="item item-audio"><div class="meta">#%s %s M%s</div><div class="data"><div id="waveform-%s" class="waveform" data-index="%s" data-url="%s"></div><div id="controls-%s" class="controls"><span class="loader">Loading...</span><button class="button-playpause">PLAY/PAUSE</button><button class="button-stop">STOP</button></div></div></div>',
 						wave_index,
-						moment(Math.floor(wave.duration * 1000)).format('mm:ss.SSS'),
+						wave.duration ?
+							moment(Math.floor(wave.duration * 1000)).format('mm:ss.SSS') :
+							'??:??.???',
 						wave.mode,
 						wave_index,
 						wave_index,
