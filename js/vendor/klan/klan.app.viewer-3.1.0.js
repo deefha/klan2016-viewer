@@ -282,7 +282,7 @@ $.klan.app.viewer = function(element, options) {
 						if (libraries_index == 'texts') {
 							$.each($.klan.api.issue.texts(plugin.actual.issue, library_index).texts, function(text_index, text) {
 								output_items.push(sprintf(
-									'<li id="tree-%s-%s-%s-%s" data-jstree=\'{"icon":"jstree-file"}\'><a href="#/%s/%s/%s/%s">[%3s] %s</a></li>',
+									'<li id="tree-%s-%s-%s-%s" data-jstree=\'{"icon":"jstree-file"}\'><a href="#/%s/%s/%s/%s">#%3s %s</a></li>',
 									plugin.actual.issue,
 									libraries_index,
 									library_index,
@@ -582,7 +582,7 @@ $.klan.app.viewer = function(element, options) {
 						);
 
 						output_library.push(sprintf(
-							'<div class="item item-text%s"><div class="meta">[%s] %s V%s%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
+							'<div class="item item-text%s"><div class="meta">#%s %s V%s%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
 							image_zoom ? ' zoom' : '',
 							plugin.actual.id,
 							plugin.cache.issue.library.texts[plugin.actual.id].name,
