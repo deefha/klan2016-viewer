@@ -447,7 +447,7 @@ $.klan.app.viewer = function(element, options) {
 				var image_zoom;
 				var image_url;
 
-				$.each(plugin.cache.issue.library.frames, function(cursor_index, cursor) {
+				$.each(plugin.cache.issue.library.frames, function(frame_index, frame) {
 // 					image_display_height = image.width > image_max_width ?
 // 						image.height * (image_max_width / image.width) :
 // 						image.height;
@@ -459,15 +459,15 @@ $.klan.app.viewer = function(element, options) {
 						'https://api.klan2016.cz/%s/cursors/%s/%02d.png',
 						plugin.actual.issue,
 						plugin.actual.index,
-						cursor_index
+						frame_index
 					);
 
 					output_library.push(sprintf(
-						'<div class="item item-cursor%s"><div class="meta">[%s] %sx%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
+						'<div class="item item-cursor%s"><div class="meta">#%s %sx%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
 						image_zoom ? ' zoom' : '',
-						cursor_index,
-						'W',
-						'H',
+						frame_index,
+						frame.width,
+						frame.height,
 						image_zoom ? sprintf('<a href="%s" data-featherlight="image">', image_url) : '',
 						image_url,
 // 						Math.round((image_max_height - image_display_height) / 2),
