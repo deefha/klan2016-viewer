@@ -14,7 +14,7 @@ $.klan.app.viewer = function(element, options) {
 
 	plugin.meta = {
 		name: 'klan.app.viewer',
-		version: '3.1.0'
+		version: '3.1.1'
 	}
 
 	plugin.settings = {}
