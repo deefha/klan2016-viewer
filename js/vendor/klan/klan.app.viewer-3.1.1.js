@@ -629,6 +629,7 @@ $.klan.app.viewer = function(element, options) {
 				plugin.actual.library == 'arklanoid' ||
 				plugin.actual.library == 'descriptions' ||
 				plugin.actual.library == 'help' ||
+				plugin.actual.library == 'index' ||
 				plugin.actual.library == 'music' ||
 				plugin.actual.library == 'screens' ||
 				plugin.actual.library == 'screensaver' ||
