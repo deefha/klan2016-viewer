@@ -434,13 +434,13 @@ $.klan.app.viewer = function(element, options) {
 					);
 
 					output_library.push(sprintf(
-						'<div class="item item-audio"><div class="meta">#%s %s M%s%s</div><div class="data"><div id="waveform-%s" class="waveform" data-index="%s" data-url="%s"></div><div id="controls-%s" class="controls"><span class="loader">Loading...</span><button class="button-playpause">PLAY/PAUSE</button><button class="button-stop">STOP</button></div></div></div>',
+						'<div class="item item-audio"><div class="meta">#%s %s M%s<br />%s</div><div class="data"><div id="waveform-%s" class="waveform" data-index="%s" data-url="%s"></div><div id="controls-%s" class="controls"><span class="loader">Loading...</span><button class="button-playpause">PLAY/PAUSE</button><button class="button-stop">STOP</button></div></div></div>',
 						wave_index,
 						wave.duration ?
 							moment(Math.floor(wave.duration * 1000)).format('mm:ss.SSS') :
 							'??:??.???',
 						wave.mode,
-						wave.title ? sprintf('<br />%s', wave.title) : '',
+						wave.title ? wave.title : '<em>- no title -</em>',
 						wave_index,
 						wave_index,
 						wave_url,
@@ -567,7 +567,7 @@ $.klan.app.viewer = function(element, options) {
 						image.width,
 						image.height,
 						image.mode,
-						image.title ? image.title : '- - -',
+						image.title ? image.title : '<em>- no title -</em>',
 						image_zoom ? sprintf('<a href="%s" data-featherlight="image">', image_url) : '',
 						image_url,
 						Math.round((image_max_height - image_display_height) / 2),
@@ -604,12 +604,12 @@ $.klan.app.viewer = function(element, options) {
 						);
 
 						output_library.push(sprintf(
-							'<div class="item item-text%s"><div class="meta">#%s %s V%s%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
+							'<div class="item item-text%s"><div class="meta">#%s %s V%s<br />%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
 							image_zoom ? ' zoom' : '',
 							plugin.actual.id,
 							plugin.cache.issue.library.texts[plugin.actual.id].name,
 							variant_index,
-							variant.title ? sprintf('<br />%s', variant.title) : '',
+							variant.title ? variant.title : '<em>- no title -</em>',
 							image_zoom ? sprintf('<a href="%s" data-featherlight="image">', image_url) : '',
 							image_url,
 // 							Math.round((image_max_height - image_display_height) / 2),
