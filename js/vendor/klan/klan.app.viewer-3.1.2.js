@@ -14,7 +14,7 @@ $.klan.app.viewer = function(element, options) {
 
 	plugin.meta = {
 		name: 'klan.app.viewer',
-		version: '3.1.1'
+		version: '3.1.2'
 	}
 
 	plugin.settings = {}
@@ -221,6 +221,9 @@ $.klan.app.viewer = function(element, options) {
 						if (libraries_index == 'cursors') {
 							preload.push($.klan.api.issue.cursors(plugin.actual.issue, library_index));
 						}
+						if (libraries_index == 'descriptions') {
+							preload.push($.klan.api.issue.descriptions(plugin.actual.issue, library_index));
+						}
 						if (libraries_index == 'fonts') {
 							preload.push($.klan.api.issue.fonts(plugin.actual.issue, library_index));
 						}
@@ -385,6 +388,9 @@ $.klan.app.viewer = function(element, options) {
 		if (plugin.actual.library == 'cursors') {
 			preload.push($.klan.api.issue.cursors(plugin.actual.issue, plugin.actual.index));
 		}
+		if (plugin.actual.library == 'descriptions') {
+			preload.push($.klan.api.issue.descriptions(plugin.actual.issue, plugin.actual.index));
+		}
 		if (plugin.actual.library == 'fonts') {
 			preload.push($.klan.api.issue.fonts(plugin.actual.issue, plugin.actual.index));
 		}
@@ -478,6 +484,18 @@ $.klan.app.viewer = function(element, options) {
 						image_zoom ? '</a>' : ''
 					));
 				});
+			}
+
+			if (plugin.actual.library == 'descriptions') {
+				output_library.push('<table><tr><th>ID</th><th>Title</th></tr>');
+				$.each(plugin.cache.issue.library.descriptions, function(description_index, description) {
+					output_library.push(sprintf(
+						'<tr><td>#%s</td><td>%s</td></tr>',
+						description_index,
+						description.title
+					));
+				});
+				output_library.push('</table>');
 			}
 
 			if (
@@ -627,7 +645,6 @@ $.klan.app.viewer = function(element, options) {
 
 			if (
 				plugin.actual.library == 'arklanoid' ||
-				plugin.actual.library == 'descriptions' ||
 				plugin.actual.library == 'help' ||
 				plugin.actual.library == 'index' ||
 				plugin.actual.library == 'music' ||

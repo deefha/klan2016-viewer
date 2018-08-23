@@ -87,6 +87,34 @@ $.klan.api.issue.cursors = function(issue, index, reload) {
 
 
 
+$.klan.api.issue.descriptions = function(issue, index, reload) {
+	var issue = typeof issue !== 'undefined' ? issue : false;
+	var index = typeof index !== 'undefined' ? index : false;
+	var reload = typeof reload !== 'undefined' ? reload : false;
+	var key = sprintf('%s/descriptions/%s',
+		issue,
+		index
+	);
+
+	if (reload || !$.klan.api.cache_get(key)) {
+		return $.ajax({
+			url: $.klan.api.url(key),
+			dataType: 'jsonp',
+			success: function(response) {
+			}
+		})
+		.then(function(response) {
+			$.klan.api.cache_set(key, response);
+			return $.klan.api.cache_get(key);
+		});
+	}
+	else {
+		return $.klan.api.cache_get(key);
+	}
+}
+
+
+
 $.klan.api.issue.fonts = function(issue, index, reload) {
 	var issue = typeof issue !== 'undefined' ? issue : false;
 	var index = typeof index !== 'undefined' ? index : false;

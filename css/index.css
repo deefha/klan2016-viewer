@@ -198,6 +198,20 @@ body {
 	margin: 0 5px;
 }
 
+.wrapper-main th,
+.wrapper-main td {
+	padding: 5px;
+}
+
+.wrapper-main th {
+	background-color: #ddd;
+}
+
+.wrapper-main td {
+	background-color: #eee;
+	border-bottom: 1px solid #ddd;
+}
+
 /* ==========================================================================
    Media Queries
    ========================================================================== */
