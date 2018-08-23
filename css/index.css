@@ -124,9 +124,12 @@ body {
 	width: 441px;
 }
 
-.wrapper-main .item-cursor,
-.wrapper-main .item-image {
+.wrapper-main .item-cursor {
 	height: 260px;
+}
+
+.wrapper-main .item-image {
+	height: 280px;
 }
 
 .wrapper-main .item-font {
@@ -140,6 +143,11 @@ body {
 .wrapper-main .item .meta {
 	line-height: 20px;
 	text-align: center;
+}
+
+.wrapper-main .item-image .meta {
+	height: 40px;
+	overflow: hidden;
 }
 
 .wrapper-main .item-audio .data {
@@ -157,9 +165,12 @@ body {
 	width: 441px;
 }
 
-.wrapper-main .item-cursor .data,
-.wrapper-main .item-image .data {
+.wrapper-main .item-cursor .data {
 	height: 240px;
+}
+
+.wrapper-main .item-image .data {
+	height: 260px;
 }
 
 .wrapper-main .item-font .data {

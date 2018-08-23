@@ -561,12 +561,13 @@ $.klan.app.viewer = function(element, options) {
 					);
 
 					output_library.push(sprintf(
-						'<div class="item item-image%s"><div class="meta">#%s %sx%s M%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
+						'<div class="item item-image%s"><div class="meta">#%s %sx%s M%s<br />%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
 						image_zoom ? ' zoom' : '',
 						image_index,
 						image.width,
 						image.height,
 						image.mode,
+						image.title ? image.title : '- - -',
 						image_zoom ? sprintf('<a href="%s" data-featherlight="image">', image_url) : '',
 						image_url,
 						Math.round((image_max_height - image_display_height) / 2),
