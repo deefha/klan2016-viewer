@@ -705,6 +705,8 @@ $.klan.app.viewer = function(element, options) {
 		plugin.actual.waveforms = {};
 
 		plugin.wrappers.main.html(output);
+
+		$(window).scrollTop(0);
 	}
 
 
