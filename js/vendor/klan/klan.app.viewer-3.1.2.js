@@ -451,19 +451,19 @@ $.klan.app.viewer = function(element, options) {
 
 			if (plugin.actual.library == 'cursors') {
 				var image_max_width = 320;
-				var image_max_height = 320;
+				var image_max_height = 240;
 				var image_display_height;
 				var image_zoom;
 				var image_url;
 
 				$.each(plugin.cache.issue.library.frames, function(frame_index, frame) {
-// 					image_display_height = image.width > image_max_width ?
-// 						image.height * (image_max_width / image.width) :
-// 						image.height;
-// 					image_display_height = image_display_height <= image_max_height ?
-// 						image_display_height :
-// 						image_max_height;
-// 					image_zoom = image.width > image_max_width || image.height > image_max_height;
+					image_display_height = frame.width > image_max_width ?
+						frame.height * (image_max_width / frame.width) :
+						frame.height;
+					image_display_height = image_display_height <= image_max_height ?
+						image_display_height :
+						image_max_height;
+					image_zoom = frame.width > image_max_width || frame.height > image_max_height;
 					image_url = sprintf(
 						'https://api.klan2016.cz/%s/cursors/%s/%02d.png',
 						plugin.actual.issue,
@@ -479,8 +479,7 @@ $.klan.app.viewer = function(element, options) {
 						frame.height,
 						image_zoom ? sprintf('<a href="%s" data-featherlight="image">', image_url) : '',
 						image_url,
-// 						Math.round((image_max_height - image_display_height) / 2),
-						0,
+						Math.round((image_max_height - image_display_height) / 2),
 						image_zoom ? '</a>' : ''
 					));
 				});
@@ -588,13 +587,6 @@ $.klan.app.viewer = function(element, options) {
 
 				$.each(plugin.cache.issue.library.texts[plugin.actual.id].variants, function(variant_index, variant) {
 					if (variant_index <= 1) {
-// 						image_display_height = image.width > image_max_width ?
-// 							image.height * (image_max_width / image.width) :
-// 							image.height;
-// 						image_display_height = image_display_height <= image_max_height ?
-// 							image_display_height :
-// 							image_max_height;
-// 						image_zoom = image.width > image_max_width || image.height > image_max_height;
 						image_url = sprintf(
 							'https://api.klan2016.cz/%s/texts/%s/%03d/%s.png',
 							plugin.actual.issue,
@@ -604,7 +596,7 @@ $.klan.app.viewer = function(element, options) {
 						);
 
 						output_library.push(sprintf(
-							'<div class="item item-text%s"><div class="meta">#%s %s V%s<br />%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
+							'<div class="item item-text%s"><div class="meta">#%s %s V%s<br />%s</div><div class="data">%s<img src="%s" />%s</div></div>',
 							image_zoom ? ' zoom' : '',
 							plugin.actual.id,
 							plugin.cache.issue.library.texts[plugin.actual.id].name,
@@ -612,8 +604,6 @@ $.klan.app.viewer = function(element, options) {
 							variant.title ? variant.title : '- no title -',
 							image_zoom ? sprintf('<a href="%s" data-featherlight="image">', image_url) : '',
 							image_url,
-// 							Math.round((image_max_height - image_display_height) / 2),
-							0,
 							image_zoom ? '</a>' : ''
 						));
 					}
