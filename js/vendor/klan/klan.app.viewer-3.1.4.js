@@ -375,12 +375,17 @@ $.klan.app.viewer = function(element, options) {
 			$('.issue-manifest', plugin.wrappers.aside)
 				.on('changed.jstree', function(e, data) {
 					if (data && data.node) {
+						if (data.instance.is_closed(data.node)) {
+							data.instance.open_node(data.node);
+						}
+
 						hasher.replaceHash(data.node.a_attr.href.replace('#/', ''));
 					}
 				})
 				.jstree({
 					core: {
 						check_callback: true,
+						dblclick_toggle: false,
 						themes: {
 							variant: 'small'
 						}
