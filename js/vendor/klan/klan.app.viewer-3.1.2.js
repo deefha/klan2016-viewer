@@ -406,8 +406,37 @@ $.klan.app.viewer = function(element, options) {
 		).done(function(responses) {
 			plugin.cache.issue.library = responses[0];
 
-			if (typeof callback !== 'undefined') {
-				callback();
+			if (
+				plugin.actual.library == 'texts' &&
+				plugin.actual.id
+			) {
+				preload = [];
+
+				$.each(plugin.cache.issue.library.texts[plugin.actual.id].variants, function(variant_index, variant) {
+					if (variant.links) {
+						preload.push($.klan.api.issue.texts(plugin.actual.issue, plugin.actual.index, plugin.actual.id, variant_index));
+					}
+				});
+
+				if (preload.length) {
+					$.when.all(
+						preload
+					).done(function(responses) {
+						if (typeof callback !== 'undefined') {
+							callback();
+						}
+					});
+				}
+				else {
+					if (typeof callback !== 'undefined') {
+						callback();
+					}
+				}
+			}
+			else {
+				if (typeof callback !== 'undefined') {
+					callback();
+				}
 			}
 		});
 	}
@@ -421,6 +450,8 @@ $.klan.app.viewer = function(element, options) {
  
 		if (force) {
 			var output_library = [];
+
+			// pre-render
 
 			if (plugin.actual.library == 'audio') {
 				var wave_url;
@@ -579,14 +610,40 @@ $.klan.app.viewer = function(element, options) {
 				plugin.actual.library == 'texts' &&
 				plugin.actual.id
 			) {
-				var image_max_width = 320;
-				var image_max_height = 320;
-				var image_display_height;
-				var image_zoom;
 				var image_url;
 
 				$.each(plugin.cache.issue.library.texts[plugin.actual.id].variants, function(variant_index, variant) {
 					if (variant_index <= 1) {
+						var output_links = [];
+						var links_count = 0;
+
+						if (variant.links) {
+							var links = $.klan.api.issue.texts(plugin.actual.issue, plugin.actual.index, plugin.actual.id, variant_index);
+							links_count = Object.keys(links).length;
+
+							$.each(links, function(link_index, link) {
+								output_links.push(sprintf(
+									'<div id="link-%s-%s" class="link" title="Link #%s" data-featherlight="#link-content-%s-%s" style="margin-top:%spx;margin-left:%spx;width:%spx;height:%spx;"></div><div id="link-content-%s-%s" class="link-content"></div>',
+									variant_index,
+									link_index,
+									link_index,
+									variant_index,
+									link_index,
+									link.area.topleft_y,
+									link.area.topleft_x,
+									link.area.bottomright_x - link.area.topleft_x,
+									link.area.bottomright_y - link.area.topleft_y,
+									variant_index,
+									link_index
+								));
+							});
+						}
+
+						output_links = sprintf(
+							'%s',
+							output_links.join('')
+						);
+
 						image_url = sprintf(
 							'https://api.klan2016.cz/%s/texts/%s/%03d/%s.png',
 							plugin.actual.issue,
@@ -596,15 +653,16 @@ $.klan.app.viewer = function(element, options) {
 						);
 
 						output_library.push(sprintf(
-							'<div class="item item-text%s"><div class="meta">#%s %s V%s<br />%s</div><div class="data">%s<img src="%s" />%s</div></div>',
-							image_zoom ? ' zoom' : '',
+							'<div id="text-%s-%s" class="item item-text"><div class="meta">#%s %s V%s <button class="links-toggle" title="Toggle links">LINKS:%s</button><br />%s</div><div class="data"><div class="links">%s</div><img src="%s" /></div></div>',
+							plugin.actual.id,
+							variant_index,
 							plugin.actual.id,
 							plugin.cache.issue.library.texts[plugin.actual.id].name,
 							variant_index,
+							links_count,
 							variant.title ? variant.title : '- no title -',
-							image_zoom ? sprintf('<a href="%s" data-featherlight="image">', image_url) : '',
-							image_url,
-							image_zoom ? '</a>' : ''
+							output_links,
+							image_url
 						));
 					}
 					else {
@@ -646,12 +704,16 @@ $.klan.app.viewer = function(element, options) {
 				output_library.push('TODO :-)');
 			}
 
+			// render
+
 			output += sprintf(
 				'%s',
 				output_library.join('')
 			);
 
 			plugin.wrappers.main.html(output);
+
+			// post-render
 
 			if (plugin.actual.library == 'audio') {
 				$('.waveform', plugin.wrappers.main).each(function() {
@@ -679,6 +741,30 @@ $.klan.app.viewer = function(element, options) {
 						$('.loader', controls).hide();
 						$('button', controls).show();
 					});
+				});
+			}
+
+			if (
+				plugin.actual.library == 'texts' &&
+				plugin.actual.id
+			) {
+				$.each(plugin.cache.issue.library.texts[plugin.actual.id].variants, function(variant_index, variant) {
+					if (variant_index <= 1) {
+						if (variant.links) {
+							var links = $.klan.api.issue.texts(plugin.actual.issue, plugin.actual.index, plugin.actual.id, variant_index);
+
+							$.each(links, function(link_index, link) {
+								$(sprintf('#link-content-%s-%s', variant_index, link_index)).JSONView(
+									JSON.stringify(link),
+									{ 'collapsed': false, 'recursive_collapser': true }
+								);
+							});
+						}
+
+						$(sprintf('#text-%s-%s .links-toggle', plugin.actual.id, variant_index), plugin.wrappers.main).on('click', function() {
+							$(sprintf('#text-%s-%s .links', plugin.actual.id, variant_index), plugin.wrappers.main).toggle();
+						});
+					}
 				});
 			}
 		}
