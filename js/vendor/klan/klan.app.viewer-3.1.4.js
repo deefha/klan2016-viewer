@@ -341,12 +341,14 @@ $.klan.app.viewer = function(element, options) {
 				}
 
 				output_manifest.push(sprintf(
-					'<li id="tree-%s-%s" data-jstree=\'{"disabled":%s}\'>%s%s</li>',
+					'<li id="tree-%s-%s" data-jstree=\'{"disabled":%s}\'><a href="#/%s/%s">%s</a>%s</li>',
 					plugin.actual.issue,
 					libraries_index,
 					output_libraries.length ?
 						'false' :
 						'true',
+					plugin.actual.issue,
+					libraries_index,
 					libraries_index,
 					output_libraries.length ?
 						sprintf(
