@@ -183,12 +183,9 @@ body {
 	width: 441px;
 }
 
-.wrapper-main .item-cursor .data {
-	height: 240px;
-}
-
+.wrapper-main .item-cursor .data,
 .wrapper-main .item-image .data {
-	height: 260px;
+	height: 240px;
 }
 
 .wrapper-main .item-font .data {
