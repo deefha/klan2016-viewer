@@ -230,6 +230,9 @@ $.klan.app.viewer = function(element, options) {
 						if (libraries_index == 'images') {
 							preload.push($.klan.api.issue.images(plugin.actual.issue, library_index));
 						}
+						if (libraries_index == 'screens') {
+							preload.push($.klan.api.issue.screens(plugin.actual.issue, library_index));
+						}
 						if (libraries_index == 'texts') {
 							preload.push($.klan.api.issue.texts(plugin.actual.issue, library_index));
 						}
@@ -278,6 +281,23 @@ $.klan.app.viewer = function(element, options) {
 									library_index,
 									font_index,
 									font_index
+								));
+							});
+						}
+
+						if (libraries_index == 'screens') {
+							$.each($.klan.api.issue.screens(plugin.actual.issue, library_index).screens, function(screen_index, screen) {
+								output_items.push(sprintf(
+									'<li id="tree-%s-%s-%s-%s" data-jstree=\'{"icon":"jstree-file"}\'><a href="#/%s/%s/%s/%s">#%3s</a></li>',
+									plugin.actual.issue,
+									libraries_index,
+									library_index,
+									screen_index,
+									plugin.actual.issue,
+									libraries_index,
+									library_index,
+									screen_index,
+									screen_index
 								));
 							});
 						}
@@ -397,6 +417,9 @@ $.klan.app.viewer = function(element, options) {
 		if (plugin.actual.library == 'images') {
 			preload.push($.klan.api.issue.images(plugin.actual.issue, plugin.actual.index));
 		}
+		if (plugin.actual.library == 'screens') {
+			preload.push($.klan.api.issue.screens(plugin.actual.issue, plugin.actual.index));
+		}
 		if (plugin.actual.library == 'texts') {
 			preload.push($.klan.api.issue.texts(plugin.actual.issue, plugin.actual.index));
 		}
@@ -407,6 +430,21 @@ $.klan.app.viewer = function(element, options) {
 			plugin.cache.issue.library = responses[0];
 
 			if (
+				plugin.actual.library == 'screens' &&
+				plugin.actual.id
+			) {
+				preload = [];
+				preload.push($.klan.api.issue.screens(plugin.actual.issue, plugin.actual.index, plugin.actual.id));
+
+				$.when.all(
+					preload
+				).done(function(responses) {
+					if (typeof callback !== 'undefined') {
+						callback();
+					}
+				});
+			}
+			else if (
 				plugin.actual.library == 'texts' &&
 				plugin.actual.id
 			) {
@@ -607,6 +645,16 @@ $.klan.app.viewer = function(element, options) {
 			}
 
 			if (
+				plugin.actual.library == 'screens' &&
+				plugin.actual.id
+			) {
+				output_library.push(sprintf(
+					'<div class="item item-screen"><div class="meta">#%s</div><div class="data"><div class="screen"></div></div></div>',
+					plugin.actual.id
+				));
+			}
+
+			if (
 				plugin.actual.library == 'texts' &&
 				plugin.actual.id
 			) {
@@ -697,7 +745,6 @@ $.klan.app.viewer = function(element, options) {
 				plugin.actual.library == 'help' ||
 				plugin.actual.library == 'index' ||
 				plugin.actual.library == 'music' ||
-				plugin.actual.library == 'screens' ||
 				plugin.actual.library == 'screensaver' ||
 				plugin.actual.library == 'video'
 			) {
@@ -742,6 +789,18 @@ $.klan.app.viewer = function(element, options) {
 						$('button', controls).show();
 					});
 				});
+			}
+
+			if (
+				plugin.actual.library == 'screens' &&
+				plugin.actual.id
+			) {
+				var screen = $.klan.api.issue.screens(plugin.actual.issue, plugin.actual.index, plugin.actual.id);
+
+				$(sprintf('.screen')).JSONView(
+					JSON.stringify(screen),
+					{ 'collapsed': false, 'recursive_collapser': true }
+				);
 			}
 
 			if (
