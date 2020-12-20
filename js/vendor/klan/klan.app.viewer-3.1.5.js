@@ -803,7 +803,7 @@ $.klan.app.viewer = function(element, options) {
 				plugin.actual.library == 'images' &&
 				plugin.actual.id
 			) {
-				$(sprintf('image-%s a', plugin.actua.id))[0].click();
+				$(sprintf('image-%s a', plugin.actual.id))[0].click();
 			}
 
 			if (
