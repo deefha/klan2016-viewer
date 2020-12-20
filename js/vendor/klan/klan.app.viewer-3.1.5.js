@@ -637,7 +637,7 @@ $.klan.app.viewer = function(element, options) {
 
 					output_library.push(sprintf(
 						'<div id="image-%s" class="item item-image%s"><div class="meta">#%s %sx%s M%s<br />%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
-						image.id,
+						image_index,
 						image_zoom ? ' zoom' : '',
 						image_index,
 						image.width,
