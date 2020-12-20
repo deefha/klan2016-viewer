@@ -107,10 +107,9 @@ $.klan.app.viewer = function(element, options) {
 			plugin.actual.index == plugin.previous.index &&
 			plugin.actual.id != plugin.previous.id
 		) {
-			return;
+			library_render(false);
 		}
-
-		if (
+		else if (
 			plugin.actual.issue != plugin.previous.issue ||
 			plugin.actual.library != plugin.previous.library ||
 			plugin.actual.index != plugin.previous.index ||
@@ -822,24 +821,6 @@ $.klan.app.viewer = function(element, options) {
 			}
 
 			if (
-				plugin.actual.library == 'images' &&
-				plugin.actual.id
-			) {
-				var image = $(sprintf('#image-%s img', plugin.actual.id));
-
-				if (!image.isInViewport()) {
-					$('html, body').scrollTop(image.offset().top);
-				}
-
-				$.featherlight(sprintf(
-					image.attr('src'),
-					plugin.actual.issue,
-					plugin.actual.index,
-					plugin.actual.id
-				));
-			}
-
-			if (
 				plugin.actual.library == 'screens' &&
 				plugin.actual.id
 			) {
@@ -874,6 +855,24 @@ $.klan.app.viewer = function(element, options) {
 					}
 				});
 			}
+		}
+
+		if (
+			plugin.actual.library == 'images' &&
+			plugin.actual.id
+		) {
+			var image = $(sprintf('#image-%s img', plugin.actual.id));
+
+			if (!image.isInViewport()) {
+				$('html, body').scrollTop(image.offset().top);
+			}
+
+			$.featherlight(sprintf(
+				image.attr('src'),
+				plugin.actual.issue,
+				plugin.actual.index,
+				plugin.actual.id
+			));
 		}
 	}
 
