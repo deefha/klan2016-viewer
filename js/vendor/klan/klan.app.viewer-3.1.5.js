@@ -121,7 +121,7 @@ $.klan.app.viewer = function(element, options) {
 				plugin.actual.issue,
 				plugin.actual.library ? sprintf('-%s', plugin.actual.library) : '',
 				plugin.actual.index ? sprintf('-%s', plugin.actual.index) : '',
-				plugin.actual.id ? sprintf('-%s', plugin.actual.id) : ''
+				plugin.actual.id && plugin.actual.library !== 'images' ? sprintf('-%s', plugin.actual.id) : ''
 			);
 
 			if (!tree.is_selected(node)) {
