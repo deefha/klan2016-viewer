@@ -14,7 +14,7 @@ $.klan.app.viewer = function(element, options) {
 
 	plugin.meta = {
 		name: 'klan.app.viewer',
-		version: '3.1.4'
+		version: '3.1.5'
 	}
 
 	plugin.settings = {}
@@ -636,7 +636,8 @@ $.klan.app.viewer = function(element, options) {
 					);
 
 					output_library.push(sprintf(
-						'<div class="item item-image%s"><div class="meta">#%s %sx%s M%s<br />%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
+						'<div id="image-%s" class="item item-image%s"><div class="meta">#%s %sx%s M%s<br />%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
+						image.id,
 						image_zoom ? ' zoom' : '',
 						image_index,
 						image.width,
@@ -796,6 +797,13 @@ $.klan.app.viewer = function(element, options) {
 						$('button', controls).show();
 					});
 				});
+			}
+
+			if (
+				plugin.actual.library == 'images' &&
+				plugin.actual.id
+			) {
+				$(sprintf('image-%s a', plugin.actua.id))[0].click();
 			}
 
 			if (
