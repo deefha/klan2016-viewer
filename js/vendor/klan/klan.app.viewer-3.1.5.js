@@ -803,8 +803,10 @@ $.klan.app.viewer = function(element, options) {
 
 			if (plugin.actual.library == 'images') {
 				$('.item-image a', plugin.wrappers.main).each(function() {
-					$(this).on('click', function() {
-						hasher.replaceHash($(this).href.replace('#/', ''));
+					var image_link = $(this);
+
+					image_link.on('click', function() {
+						hasher.replaceHash(image_link.href.replace('#/', ''));
 					});
 				});
 			}
