@@ -806,7 +806,7 @@ $.klan.app.viewer = function(element, options) {
 					var image_link = $(this);
 
 					image_link.on('click', function() {
-						hasher.replaceHash(image_link.href.replace('#/', ''));
+						hasher.replaceHash(image_link[0].href.replace('#/', ''));
 					});
 				});
 			}
