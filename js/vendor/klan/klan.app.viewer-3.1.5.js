@@ -101,6 +101,16 @@ $.klan.app.viewer = function(element, options) {
 // ******************************************* common *******************************************
 	var common_onchange = function() {
 		if (
+			plugin.actual.library == 'images' &&
+			plugin.actual.issue == plugin.previous.issue &&
+			plugin.actual.library == plugin.previous.library &&
+			plugin.actual.index == plugin.previous.index &&
+			plugin.actual.id != plugin.previous.id
+		) {
+			return;
+		}
+
+		if (
 			plugin.actual.issue != plugin.previous.issue ||
 			plugin.actual.library != plugin.previous.library ||
 			plugin.actual.index != plugin.previous.index ||
