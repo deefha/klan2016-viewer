@@ -627,7 +627,8 @@ $.klan.app.viewer = function(element, options) {
 					image_display_height = image_display_height <= image_max_height ?
 						image_display_height :
 						image_max_height;
-					image_zoom = image.width > image_max_width || image.height > image_max_height;
+// 					image_zoom = image.width > image_max_width || image.height > image_max_height;
+					image_zoom = true;
 					image_url = sprintf(
 						'https://api.klan2016.cz/%s/images/%s/%04d.png',
 						plugin.actual.issue,
@@ -803,6 +804,7 @@ $.klan.app.viewer = function(element, options) {
 				plugin.actual.library == 'images' &&
 				plugin.actual.id
 			) {
+				$([document.documentElement, document.body]).scrollTop($("#elementtoScrollToID").offset().top);
 				$(sprintf('#image-%s a', plugin.actual.id)).trigger('click');
 			}
 
