@@ -867,12 +867,19 @@ $.klan.app.viewer = function(element, options) {
 				$('html, body').scrollTop(image.offset().top);
 			}
 
-			$.featherlight(sprintf(
-				image.attr('src'),
-				plugin.actual.issue,
-				plugin.actual.index,
-				plugin.actual.id
-			));
+			$.featherlight(
+				sprintf(
+					image.attr('src'),
+					plugin.actual.issue,
+					plugin.actual.index,
+					plugin.actual.id
+				),
+				{
+					afterClose: function(event) {
+						hasher.replaceHash(sprintf('%s/%s/%s', plugin.actual.issue, plugin.actual.library, plugin.actual.index));
+					}
+				}
+			);
 		}
 	}
 
