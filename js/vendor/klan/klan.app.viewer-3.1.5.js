@@ -815,14 +815,14 @@ $.klan.app.viewer = function(element, options) {
 				plugin.actual.library == 'images' &&
 				plugin.actual.id
 			) {
-				var image_selected = $(sprintf('#image-%s a', plugin.actual.id));
+				var image = $(sprintf('#image-%s img', plugin.actual.id));
 
-				if (!image_selected.visible(true)) {
-					$('html, body').scrollTop(image_selected.offset().top);
+				if (!image.visible(true)) {
+					$('html, body').scrollTop(image.offset().top);
 				}
 
 				$.featherlight(sprintf(
-					'https://api.klan2016.cz/%s/images/%s/%04d.png',
+					image.attr('src'),
 					plugin.actual.issue,
 					plugin.actual.index,
 					plugin.actual.id
