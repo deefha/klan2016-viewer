@@ -804,7 +804,7 @@ $.klan.app.viewer = function(element, options) {
 				plugin.actual.library == 'images' &&
 				plugin.actual.id
 			) {
-				$('html, body').scrollTop($("#elementtoScrollToID").offset().top);
+				$('html, body').scrollTop($(sprintf('#image-%s a', plugin.actual.id)).offset().top);
 				$(sprintf('#image-%s a', plugin.actual.id)).trigger('click');
 			}
 
