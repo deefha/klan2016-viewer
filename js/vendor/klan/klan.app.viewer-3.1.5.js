@@ -801,6 +801,14 @@ $.klan.app.viewer = function(element, options) {
 				});
 			}
 
+			if (plugin.actual.library == 'images') {
+				$('.item-image a', plugin.wrappers.main).each(function() {
+					$(this).on('click', function() {
+						hasher.replaceHash($(this).href.replace('#/', ''));
+					});
+				});
+			}
+
 			if (
 				plugin.actual.library == 'images' &&
 				plugin.actual.id
