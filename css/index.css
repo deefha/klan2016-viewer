@@ -184,6 +184,12 @@ body {
 	height: 240px;
 }
 
+.wrapper-main .item-image .data a {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
 .wrapper-main .item-font .data {
 	height: 320px;
 }
