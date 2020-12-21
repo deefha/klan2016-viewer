@@ -879,6 +879,7 @@ $.klan.app.viewer = function(element, options) {
 					plugin.actual.id
 				),
 				{
+					type: 'image',
 					afterClose: function(event) {
 						hasher.replaceHash(sprintf('%s/%s/%s', plugin.actual.issue, plugin.actual.library, plugin.actual.index));
 					}
