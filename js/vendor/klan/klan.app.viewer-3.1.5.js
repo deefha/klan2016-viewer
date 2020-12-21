@@ -637,7 +637,8 @@ $.klan.app.viewer = function(element, options) {
 						image_display_height :
 						image_max_height;
 					image_url_original = sprintf(
-						'https://api.klan2016.cz/%s/images/%s/%04d.png',
+// 						'https://api.klan2016.cz/%s/images/%s/%04d.png',
+						'https://i.klan2016.cz/insecure/plain/local:///%s/images/%s/%04d.png',
 						plugin.actual.issue,
 						plugin.actual.index,
 						image_index
@@ -650,7 +651,7 @@ $.klan.app.viewer = function(element, options) {
 					);
 
 					output_library.push(sprintf(
-						'<div id="image-%s" class="item item-image"><div class="meta">#%s %sx%s M%s<br />%s</div><div class="data"><a href="#/%s/%s/%s/%s"><img src="%s" style="margin-top:%spx;" /></a></div></div>',
+						'<div id="image-%s" class="item item-image"><div class="meta">#%s %sx%s M%s<br />%s</div><div class="data"><a href="#/%s/%s/%s/%s" data-original="%s"><img src="%s" style="margin-top:%spx;" /></a></div></div>',
 						image_index,
 						image_index,
 						image.width,
@@ -661,6 +662,7 @@ $.klan.app.viewer = function(element, options) {
 						plugin.actual.library,
 						plugin.actual.index,
 						image_index,
+						image_url_original,
 						image_url_thumbnail,
 						Math.round((image_max_height - image_display_height) / 2)
 					));
@@ -873,7 +875,7 @@ $.klan.app.viewer = function(element, options) {
 
 			$.featherlight(
 				sprintf(
-					image.attr('src'),
+					image.data('original'),
 					plugin.actual.issue,
 					plugin.actual.index,
 					plugin.actual.id
