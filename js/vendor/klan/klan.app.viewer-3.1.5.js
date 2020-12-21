@@ -637,8 +637,7 @@ $.klan.app.viewer = function(element, options) {
 						image_display_height :
 						image_max_height;
 					image_url_original = sprintf(
-// 						'https://api.klan2016.cz/%s/images/%s/%04d.png',
-						'https://i.klan2016.cz/insecure/plain/local:///%s/images/%s/%04d.png',
+						'https://api.klan2016.cz/%s/images/%s/%04d.png',
 						plugin.actual.issue,
 						plugin.actual.index,
 						image_index
