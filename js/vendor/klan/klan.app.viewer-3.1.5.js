@@ -651,7 +651,7 @@ $.klan.app.viewer = function(element, options) {
 					);
 
 					output_library.push(sprintf(
-						'<div id="image-%s" class="item item-image"><div class="meta">#%s %sx%s M%s<br />%s</div><div class="data"><a href="#/%s/%s/%s/%s"><img src="%s" data-original="%s" style="margin-top:%spx;" /></a></div></div>',
+						'<div id="image-%s" class="item item-image"><div class="meta">#%s %sx%s M%s<br />%s</div><div class="data"><a href="#/%s/%s/%s/%s"><img src="%s" data-original="%s" style="padding-top:%spx;" /></a></div></div>',
 						image_index,
 						image_index,
 						image.width,
