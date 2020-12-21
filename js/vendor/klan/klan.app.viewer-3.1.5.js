@@ -636,8 +636,14 @@ $.klan.app.viewer = function(element, options) {
 					image_display_height = image_display_height <= image_max_height ?
 						image_display_height :
 						image_max_height;
-					image_url = sprintf(
+					image_url_original = sprintf(
 						'https://api.klan2016.cz/%s/images/%s/%04d.png',
+						plugin.actual.issue,
+						plugin.actual.index,
+						image_index
+					);
+					image_url_thumbnail = sprintf(
+						'https://i.klan2016.cz/insecure/fit/320/240/ce/0/plain/local:///%s/images/%s/%04d.png@jpg',
 						plugin.actual.issue,
 						plugin.actual.index,
 						image_index
@@ -655,7 +661,7 @@ $.klan.app.viewer = function(element, options) {
 						plugin.actual.library,
 						plugin.actual.index,
 						image_index,
-						image_url,
+						image_url_thumbnail,
 						Math.round((image_max_height - image_display_height) / 2)
 					));
 				});
