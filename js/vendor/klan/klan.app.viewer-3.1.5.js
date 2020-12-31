@@ -3,6 +3,24 @@
 $.klan = $.klan || {};
 $.klan.app = $.klan.app || {};
 
+function Utils() {}
+Utils.prototype = {
+	constructor: Utils,
+	isElementInView: function (element, fullyInView) {
+		var pageTop = $(window).scrollTop();
+		var pageBottom = pageTop + $(window).height();
+		var elementTop = $(element).offset().top;
+		var elementBottom = elementTop + $(element).height();
+
+		if (fullyInView === true) {
+			return ((pageTop < elementTop) && (pageBottom > elementBottom));
+		} else {
+			return ((elementTop <= pageBottom) && (elementBottom >= pageTop));
+		}
+	}
+};
+var Utils = new Utils();
+
 $.klan.app.viewer = function(element, options) {
 	var defaults = {
 		issue: '00'
@@ -870,7 +888,7 @@ $.klan.app.viewer = function(element, options) {
 		) {
 			var image = $(sprintf('#image-%s img', plugin.actual.id));
 
-			if (!image.isInViewport()) {
+			if (!Utils.isElementInView(image, false)) {
 				alert(image.offset().top);
 				$('html, body').scrollTop(image.offset().top);
 			}
@@ -916,7 +934,6 @@ $.klan.app.viewer = function(element, options) {
 
 	plugin.init();
 }
-
 
 
 $.fn.klan_app_viewer = function(options) {
