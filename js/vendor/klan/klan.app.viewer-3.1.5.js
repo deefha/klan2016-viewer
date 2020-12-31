@@ -889,7 +889,7 @@ $.klan.app.viewer = function(element, options) {
 			var image = $(sprintf('#image-%s img', plugin.actual.id));
 
 			if (!Utils.isElementInView(image, false)) {
-				$('html, body').scrollTop(
+				$('.wrapper-main').scrollTop(
 					image.offset().top >= ($(window).height() / 2) + 100 ?
 						image.offset().top - ($(window).height() / 2) + 100 :
 						0
