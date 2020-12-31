@@ -889,7 +889,6 @@ $.klan.app.viewer = function(element, options) {
 			var image = $(sprintf('#image-%s img', plugin.actual.id));
 
 			if (!Utils.isElementInView(image, false)) {
-				alert(image.offset().top);
 				$('html, body').scrollTop(image.offset().top);
 			}
 
@@ -902,6 +901,8 @@ $.klan.app.viewer = function(element, options) {
 				),
 				{
 					type: 'image',
+					openSpeed: 0,
+					closeSpeed: 0,
 					afterContent: function(event) {
 						if (image.attr('alt')) {
 							$(sprintf('<div class="title" style="width:%spx;">', image.data('original-width'))).text(image.attr('alt')).prependTo(this.$instance.find('.featherlight-content'));
