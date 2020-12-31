@@ -883,7 +883,7 @@ $.klan.app.viewer = function(element, options) {
 				{
 					type: 'image',
 					afterContent: function(event) {
-						$('<div class="title">').text(image.attr('alt')).appendTo(this.$instance.find('.featherlight-content'));
+						$('<div class="title">').text(image.attr('alt')).prependTo(this.$instance.find('.featherlight-content'));
 					},
 					afterClose: function(event) {
 						hasher.replaceHash(sprintf('%s/%s/%s', plugin.actual.issue, plugin.actual.library, plugin.actual.index));
