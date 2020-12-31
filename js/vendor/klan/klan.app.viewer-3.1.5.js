@@ -890,8 +890,8 @@ $.klan.app.viewer = function(element, options) {
 
 			if (!Utils.isElementInView(image, false)) {
 				$('html, body').scrollTop(
-					image.offset().top >= $(window).height() / 2 ?
-						image.offset().top - $(window).height() / 2 :
+					image.offset().top >= ($(window).height() / 2) - 100 ?
+						image.offset().top - ($(window).height() / 2) - 100 :
 						0
 				);
 			}
