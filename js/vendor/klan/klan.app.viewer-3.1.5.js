@@ -871,6 +871,7 @@ $.klan.app.viewer = function(element, options) {
 			var image = $(sprintf('#image-%s img', plugin.actual.id));
 
 			if (!image.isInViewport()) {
+				alert(image.offset().top);
 				$('html, body').scrollTop(image.offset().top);
 			}
 
