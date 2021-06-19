@@ -848,7 +848,7 @@ $.klan.app.viewer = function(element, options) {
 						return response.json();
 					})
 					.then(peaks => {
-						console.log('loaded peaks! sample_rate: ' + peaks.sample_rate);
+						console.log(sprintf('loaded peaks for %s', wave_index));
 
 						plugin.actual.waveforms[wave_index].load(wave_url, peaks.data);
 					})
