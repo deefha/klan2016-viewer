@@ -821,10 +821,18 @@ $.klan.app.viewer = function(element, options) {
 					var wave_url_peaks = waveform.data('url-peaks');
 					var controls = $(sprintf('#controls-%s', wave_index), plugin.wrappers.main);
 
-					plugin.actual.waveforms[wave_index] = WaveSurfer.create({
-						container: sprintf('#waveform-%s', wave_index)
-					});
-					plugin.actual.waveforms[wave_index].on('ready', function() {
+					fetch(wave_url_peaks)
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("HTTP error " + response.status);
+						}
+						return response.json();
+					})
+					.then(peaks => {
+						plugin.actual.waveforms[wave_index] = WaveSurfer.create({
+							container: sprintf('#waveform-%s', wave_index)
+						});
+						plugin.actual.waveforms[wave_index].load(wave_url, peaks.data);
 						plugin.actual.waveforms[wave_index].on('finish', function() {
 							plugin.actual.waveforms[wave_index].stop();
 						});
@@ -838,19 +846,6 @@ $.klan.app.viewer = function(element, options) {
 
 						$('.loader', controls).hide();
 						$('button', controls).show();
-					});
-
-					fetch(wave_url_peaks)
-					.then(response => {
-						if (!response.ok) {
-							throw new Error("HTTP error " + response.status);
-						}
-						return response.json();
-					})
-					.then(peaks => {
-						console.log(sprintf('loaded peaks for %s', wave_index));
-
-						plugin.actual.waveforms[wave_index].load(wave_url, peaks.data);
 					})
 					.catch((e) => {
 						console.error('error', e);
