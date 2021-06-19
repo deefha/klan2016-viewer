@@ -821,6 +821,25 @@ $.klan.app.viewer = function(element, options) {
 					var wave_url_peaks = waveform.data('url-peaks');
 					var controls = $(sprintf('#controls-%s', wave_index), plugin.wrappers.main);
 
+					plugin.actual.waveforms[wave_index] = WaveSurfer.create({
+						container: sprintf('#waveform-%s', wave_index)
+					});
+					plugin.actual.waveforms[wave_index].on('ready', function() {
+						plugin.actual.waveforms[wave_index].on('finish', function() {
+							plugin.actual.waveforms[wave_index].stop();
+						});
+
+						$('.button-playpause', controls).on('click', function() {
+							plugin.actual.waveforms[wave_index].playPause();
+						});
+						$('.button-stop', controls).on('click', function() {
+							plugin.actual.waveforms[wave_index].stop();
+						});
+
+						$('.loader', controls).hide();
+						$('button', controls).show();
+					});
+
 					fetch(wave_url_peaks)
 					.then(response => {
 						if (!response.ok) {
@@ -831,25 +850,7 @@ $.klan.app.viewer = function(element, options) {
 					.then(peaks => {
 						console.log('loaded peaks! sample_rate: ' + peaks.sample_rate);
 
-						plugin.actual.waveforms[wave_index] = WaveSurfer.create({
-							container: sprintf('#waveform-%s', wave_index)
-						});
 						plugin.actual.waveforms[wave_index].load(wave_url, peaks.data);
-						plugin.actual.waveforms[wave_index].on('ready', function() {
-							plugin.actual.waveforms[wave_index].on('finish', function() {
-								plugin.actual.waveforms[wave_index].stop();
-							});
-
-							$('.button-playpause', controls).on('click', function() {
-								plugin.actual.waveforms[wave_index].playPause();
-							});
-							$('.button-stop', controls).on('click', function() {
-								plugin.actual.waveforms[wave_index].stop();
-							});
-
-							$('.loader', controls).hide();
-							$('button', controls).show();
-						});
 					})
 					.catch((e) => {
 						console.error('error', e);
