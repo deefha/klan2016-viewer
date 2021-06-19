@@ -821,7 +821,7 @@ $.klan.app.viewer = function(element, options) {
 					var wave_url_peaks = waveform.data('url-peaks');
 					var controls = $(sprintf('#controls-%s', wave_index), plugin.wrappers.main);
 
-					fetch('../long_clip.json')
+					fetch(wave_url_peaks)
 					.then(response => {
 						if (!response.ok) {
 							throw new Error("HTTP error " + response.status);
