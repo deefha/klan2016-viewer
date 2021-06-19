@@ -154,10 +154,6 @@ body {
 	height: 340px;
 }
 
-.wrapper-main .item.zoom {
-	color: green;
-}
-
 .wrapper-main .item .meta {
 	line-height: 20px;
 	text-align: center;
@@ -186,6 +182,12 @@ body {
 .wrapper-main .item-cursor .data,
 .wrapper-main .item-image .data {
 	height: 240px;
+}
+
+.wrapper-main .item-image .data a {
+	display: block;
+	width: 100%;
+	height: 100%;
 }
 
 .wrapper-main .item-font .data {
@@ -242,6 +244,13 @@ body {
 
 .wrapper-main .data .link-content {
 	display: none;
+}
+
+.featherlight-content .title {
+	position: absolute;
+	top: 0;
+	line-height: 25px;
+	text-align: center;
 }
 
 /* ==========================================================================

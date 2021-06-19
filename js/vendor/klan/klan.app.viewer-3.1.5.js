@@ -3,6 +3,24 @@
 $.klan = $.klan || {};
 $.klan.app = $.klan.app || {};
 
+function Utils() {}
+Utils.prototype = {
+	constructor: Utils,
+	isElementInView: function (element, fullyInView) {
+		var pageTop = $(window).scrollTop();
+		var pageBottom = pageTop + $(window).height();
+		var elementTop = $(element).offset().top;
+		var elementBottom = elementTop + $(element).height();
+
+		if (fullyInView === true) {
+			return ((pageTop < elementTop) && (pageBottom > elementBottom));
+		} else {
+			return ((elementTop <= pageBottom) && (elementBottom >= pageTop));
+		}
+	}
+};
+var Utils = new Utils();
+
 $.klan.app.viewer = function(element, options) {
 	var defaults = {
 		issue: '00'
@@ -14,7 +32,7 @@ $.klan.app.viewer = function(element, options) {
 
 	plugin.meta = {
 		name: 'klan.app.viewer',
-		version: '3.1.4'
+		version: '3.1.5'
 	}
 
 	plugin.settings = {}
@@ -101,6 +119,15 @@ $.klan.app.viewer = function(element, options) {
 // ******************************************* common *******************************************
 	var common_onchange = function() {
 		if (
+			plugin.actual.library == 'images' &&
+			plugin.actual.issue == plugin.previous.issue &&
+			plugin.actual.library == plugin.previous.library &&
+			plugin.actual.index == plugin.previous.index &&
+			plugin.actual.id != plugin.previous.id
+		) {
+			library_render(false);
+		}
+		else if (
 			plugin.actual.issue != plugin.previous.issue ||
 			plugin.actual.library != plugin.previous.library ||
 			plugin.actual.index != plugin.previous.index ||
@@ -112,7 +139,7 @@ $.klan.app.viewer = function(element, options) {
 				plugin.actual.issue,
 				plugin.actual.library ? sprintf('-%s', plugin.actual.library) : '',
 				plugin.actual.index ? sprintf('-%s', plugin.actual.index) : '',
-				plugin.actual.id ? sprintf('-%s', plugin.actual.id) : ''
+				plugin.actual.id && plugin.actual.library !== 'images' ? sprintf('-%s', plugin.actual.id) : ''
 			);
 
 			if (!tree.is_selected(node)) {
@@ -627,26 +654,36 @@ $.klan.app.viewer = function(element, options) {
 					image_display_height = image_display_height <= image_max_height ?
 						image_display_height :
 						image_max_height;
-					image_zoom = image.width > image_max_width || image.height > image_max_height;
-					image_url = sprintf(
+					image_url_original = sprintf(
 						'https://api.klan2016.cz/%s/images/%s/%04d.png',
+						plugin.actual.issue,
+						plugin.actual.index,
+						image_index
+					);
+					image_url_thumbnail = sprintf(
+						'https://i.klan2016.cz/insecure/fit/320/240/ce/0/plain/local:///%s/images/%s/%04d.png@jpg',
 						plugin.actual.issue,
 						plugin.actual.index,
 						image_index
 					);
 
 					output_library.push(sprintf(
-						'<div class="item item-image%s"><div class="meta">#%s %sx%s M%s<br />%s</div><div class="data">%s<img src="%s" style="margin-top:%spx;" />%s</div></div>',
-						image_zoom ? ' zoom' : '',
+						'<div id="image-%s" class="item item-image"><div class="meta">#%s %sx%s M%s<br />%s</div><div class="data"><a href="#/%s/%s/%s/%s"><img src="%s" alt="%s" data-original="%s" data-original-width="%s" style="padding-top:%spx;" /></a></div></div>',
+						image_index,
 						image_index,
 						image.width,
 						image.height,
 						image.mode,
 						image.title ? image.title : '- no title -',
-						image_zoom ? sprintf('<a href="%s" data-featherlight="image">', image_url) : '',
-						image_url,
-						Math.round((image_max_height - image_display_height) / 2),
-						image_zoom ? '</a>' : ''
+						plugin.actual.issue,
+						plugin.actual.library,
+						plugin.actual.index,
+						image_index,
+						image_url_thumbnail,
+						image.title ? image.title : '',
+						image_url_original,
+						image.width,
+						Math.round((image_max_height - image_display_height) / 2)
 					));
 				});
 			}
@@ -798,6 +835,16 @@ $.klan.app.viewer = function(element, options) {
 				});
 			}
 
+			if (plugin.actual.library == 'images') {
+				$('.item-image a', plugin.wrappers.main).each(function() {
+					var image_link = $(this);
+
+					image_link.on('click', function() {
+						hasher.replaceHash(image_link[0].href.replace('#/', ''));
+					});
+				});
+			}
+
 			if (
 				plugin.actual.library == 'screens' &&
 				plugin.actual.id
@@ -834,6 +881,43 @@ $.klan.app.viewer = function(element, options) {
 				});
 			}
 		}
+
+		if (
+			plugin.actual.library == 'images' &&
+			plugin.actual.id
+		) {
+			var image = $(sprintf('#image-%s img', plugin.actual.id));
+
+			if (!Utils.isElementInView(image, false)) {
+				$('html, body').scrollTop(
+					image.offset().top >= ($(window).height() / 2) + 100 ?
+						image.offset().top - ($(window).height() / 2) + 100 :
+						0
+				);
+			}
+
+			$.featherlight(
+				sprintf(
+					image.data('original'),
+					plugin.actual.issue,
+					plugin.actual.index,
+					plugin.actual.id
+				),
+				{
+					type: 'image',
+					openSpeed: 0,
+					closeSpeed: 0,
+					afterContent: function(event) {
+						if (image.attr('alt')) {
+							$(sprintf('<div class="title" style="width:%spx;">', image.data('original-width'))).text(image.attr('alt')).prependTo(this.$instance.find('.featherlight-content'));
+						}
+					},
+					afterClose: function(event) {
+						hasher.replaceHash(sprintf('%s/%s/%s', plugin.actual.issue, plugin.actual.library, plugin.actual.index));
+					}
+				}
+			);
+		}
 	}
 
 
@@ -855,7 +939,6 @@ $.klan.app.viewer = function(element, options) {
 
 	plugin.init();
 }
-
 
 
 $.fn.klan_app_viewer = function(options) {
