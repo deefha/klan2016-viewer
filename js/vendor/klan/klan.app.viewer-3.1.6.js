@@ -829,19 +829,32 @@ $.klan.app.viewer = function(element, options) {
 						return response.json();
 					})
 					.then(peaks => {
-						plugin.actual.waveforms[wave_index] = WaveSurfer.create({
+						plugin.actual.waveforms[wave_index] = {
+							surfer: null,
+							loaded: false
+						}
+						plugin.actual.waveforms[wave_index].surfer = WaveSurfer.create({
 							container: sprintf('#waveform-%s', wave_index)
 						});
-						plugin.actual.waveforms[wave_index].load(wave_url, peaks.data);
-						plugin.actual.waveforms[wave_index].on('finish', function() {
-							plugin.actual.waveforms[wave_index].stop();
+						plugin.actual.waveforms[wave_index].surfer.load(wave_url, peaks.data);
+						plugin.actual.waveforms[wave_index].surfer.on('ready', function() {
+							plugin.actual.waveforms[wave_index].loaded = true;
+							$('.loader', controls).hide();
+							$('button', controls).show();
+						});
+						plugin.actual.waveforms[wave_index].surfer.on('finish', function() {
+							plugin.actual.waveforms[wave_index].surfer.stop();
 						});
 
 						$('.button-playpause', controls).on('click', function() {
-							plugin.actual.waveforms[wave_index].playPause();
+							if (!plugin.actual.waveforms[wave_index].loaded) {
+								$('.loader', controls).show();
+								$('button', controls).hide();
+							}
+							plugin.actual.waveforms[wave_index].surfer.playPause();
 						});
 						$('.button-stop', controls).on('click', function() {
-							plugin.actual.waveforms[wave_index].stop();
+							plugin.actual.waveforms[wave_index].surfer.stop();
 						});
 
 						$('.loader', controls).hide();
@@ -944,7 +957,7 @@ $.klan.app.viewer = function(element, options) {
 		var output = '';
  
 		$.each(plugin.actual.waveforms, function(waveform_index, waveform) {
-			waveform.destroy();
+			waveform.surfer.destroy();
 		});
 		plugin.actual.waveforms = {};
 
