@@ -957,7 +957,7 @@ $.klan.app.viewer = function(element, options) {
 		var output = '';
  
 		$.each(plugin.actual.waveforms, function(waveform_index, waveform) {
-			waveform.destroy();
+			waveform.surfer.destroy();
 		});
 		plugin.actual.waveforms = {};
 
